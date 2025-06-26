@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Sobre Nosotros - AEEEGS{% endblock %}
+
+{% block content %}
+<section class="my-5">
+    <div class="container">
+        <h1 class="text-center mb-4">¿Quiénes somos?</h1>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <p class="lead text-justify">
+                    La <strong>Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal (AEEEGS)</strong> es una organización sin fines de lucro que agrupa a los estudiantes y alumnos de Guinea Ecuatorial que residen y estudian en la República de Senegal. 
+                    Nuestro objetivo principal es <strong>promover la unidad, el apoyo mutuo y el desarrollo académico, cultural y social</strong> de nuestros miembros, así como representar sus intereses ante las instituciones educativas y diplomáticas.
+                </p>
+                <p class="text-justify">
+                    Además de ser un espacio de solidaridad y confraternidad, la AEEEGS también organiza eventos culturales, conferencias, actividades deportivas y jornadas académicas para fortalecer los lazos entre los miembros y fomentar el espíritu de comunidad.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="my-5">
+
+<section class="my-5 bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Conoce a nuestro Presidente</h2>
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center">
+                <img src="{{ url_for('static', filename='assets/img/presi.png') }}" alt="Presidente AEEEGS" class="img-fluid rounded-circle shadow" style="width: 250px; height: 250px; object-fit: cover;">
+            </div>
+            <div class="col-md-8">
+                <h3 class="fw-bold">𝐇𝐞́𝐜𝐭𝐨𝐫 𝐀𝐧𝐭𝐨𝐧𝐢𝐨 𝐍𝐝𝐨𝐧𝐠𝐨 𝐄𝐧𝐞𝐦𝐞</h3>
+                <p class="text-muted">Presidente de la AEEEGS</p>
+                <p class="text-justify">
+                    Estudiante comprometido y líder entusiasta, el Presidente de la AEEEGS representa a toda la comunidad estudiantil ecuatoguineana en Senegal. Su visión se basa en el fortalecimiento de los lazos entre los miembros, el impulso de actividades formativas y culturales, y la defensa de los intereses académicos y sociales de todos los estudiantes.
+                </p>
+                <p class="text-justify">
+                    Bajo su liderazgo, la AEEEGS continúa creciendo como una comunidad unida, activa y resiliente. Cree firmemente en el poder de la educación, la colaboración y la identidad cultural como motores de transformación.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Modifier Article - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 800px;">
+    <h2>Modifier l'article</h2>
+    <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Titre</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ article.title }}" required autofocus>
+        </div>
+
+        <div class="mb-3">
+            <label for="subtitle" class="form-label">Sous-titre</label>
+            <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ article.subtitle }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Contenu</label>
+            <textarea class="form-control" id="content" name="content" rows="7" required>{{ article.content }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Catégorie</label>
+            <select class="form-select" id="category" name="category_id" required>
+                <option value="">-- Choisissez une catégorie --</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id == article.category_id %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label">Image (optionnel)</label>
+            {% if article.image_filename %}
+            <p>Image actuelle : <img src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="Image article" style="max-width: 150px;"></p>
+            {% endif %}
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
+
+        <button type="submit" class="btn btn-success">Modifier</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Retour</a>
+    </form>
+</div>
+{% endblock %}

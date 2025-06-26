@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Tableau de bord</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <a href="{{ url_for('articles') }}" class="btn btn-primary w-100 mb-3">Gérer les articles</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('categories') }}" class="btn btn-secondary w-100 mb-3">Gérer les catégories</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('admins') }}" class="btn btn-dark w-100 mb-3">Gérer les administrateurs</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

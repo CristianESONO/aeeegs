@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}Lista de categorías - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="{{ url_for('admin_dashboard') }}">Panel de Administración</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_articles') }}">Artículos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_categories') }}">Categorías</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('list_admins') }}">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Categorías</h2>
+    <a href="{{ url_for('add_category') }}" class="btn btn-primary mb-3">Agregar una categoría</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Número de artículos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.articles|length }}</td>
+                <td>
+                    <a href="{{ url_for('edit_category', category_id=category.id) }}" class="btn btn-sm btn-warning">Modificar</a>
+                    <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Confirmar eliminación?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3">No se encontraron categorías</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

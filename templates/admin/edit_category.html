@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}Modifier Catégorie - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 600px;">
+    <h2>Modifier la catégorie</h2>
+    <form method="POST" action="{{ url_for('edit_category', category_id=category.id) }}">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nom de la catégorie</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ category.name }}" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-success">Modifier</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Retour</a>
+    </form>
+</div>
+{% endblock %}

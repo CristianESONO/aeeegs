@@ -1,0 +1,274 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalle del artículo - AEEEGS{% endblock %}
+
+{% block header %}
+{% set bg_url = url_for('static', filename='assets/img/post-bg.jpg') %}
+<header class="masthead" style="background-image: url('{{ bg_url }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>{{ article.title }}</h1>
+                    {% if article.subtitle %}
+                    <h2 class="subheading">{{ article.subtitle }}</h2>
+                    {% endif %}
+                    <span class="meta">
+                        Publicado por
+                        <a href="#!">{{ article.author.username }}</a>
+                        el {{ article.date_posted.strftime('%d %B %Y') }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% macro render_comment(comment, level=0) %}
+<div class="comment" style="margin-left: {{ level * 30 }}px; border-left: 2px solid #ccc; padding-left: 10px; margin-top: 15px;">
+    <p><strong>{{ comment.username }}</strong> <small class="text-muted">{{ comment.date_posted.strftime('%d %B %Y %H:%M') }}</small></p>
+    <p>{{ comment.content }}</p>
+    <p>
+        <form action="{{ url_for('like_comment', comment_id=comment.id) }}" method="post" class="like-comment-form" data-comment-id="{{ comment.id }}" style="display:inline;">
+            <button type="submit" class="btn-like" aria-label="Me gusta comentario" style="background:none; border:none; cursor:pointer; font-size:18px; color:gray;">
+                <span class="heart">&#10084;</span> <span class="like-count">{{ comment.likes or 0 }}</span>
+            </button>
+        </form>
+        <button class="btn btn-sm btn-link" onclick="showReplyForm({{ comment.id }})">Responder</button>
+    </p>
+    <div id="reply-form-{{ comment.id }}" class="reply-form" style="display:none; margin-top:10px;">
+        <form action="{{ url_for('add_comment') }}" method="post">
+            <input type="hidden" name="post_id" value="{{ article.id }}">
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <div class="mb-2">
+                <input type="text" name="username" placeholder="Tu apodo" required class="form-control form-control-sm">
+            </div>
+            <div class="mb-2 position-relative">
+                <textarea id="reply-textarea-{{ comment.id }}" name="content" placeholder="Tu respuesta" required class="form-control form-control-sm" rows="2"></textarea>
+                <button type="button" id="emoji-btn-reply-{{ comment.id }}" class="emoji-btn" aria-label="Emoji" style="position: absolute; right: 8px; bottom: 8px; border: none; background: transparent; font-size: 20px; cursor: pointer;">😀</button>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="hideReplyForm({{ comment.id }})">Cancelar</button>
+        </form>
+    </div>
+
+    {% for reply in comment.replies %}
+        {{ render_comment(reply, level + 1) }}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% block content %}
+<article class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+
+                {# Contenido del artículo #}
+                {% for paragraph in article.content.split('\n\n') %}
+                    <p>{{ paragraph }}</p>
+                {% endfor %}
+
+                {% if article.quote %}
+                <h2 class="section-heading">Continuación...</h2>
+                <blockquote class="blockquote">{{ article.quote }}</blockquote>
+                {% endif %}
+
+                {% if article.extra %}
+                <p>{{ article.extra }}</p>
+                {% endif %}
+
+                {% if article.image_filename %}
+                <img class="img-fluid" src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="Imagen del artículo" />
+                {% endif %}
+
+                {% if article.caption %}
+                <span class="caption text-muted">{{ article.caption }}</span>
+                {% endif %}
+
+                <p class="mt-4">
+                    Fuente: <a href="http://spaceipsum.com/">Space Ipsum</a> &middot; Imágenes: <a href="https://www.flickr.com/photos/nasacommons/">NASA</a>
+                </p>
+
+                {# Me gusta artículo como corazón #}
+                <form action="{{ url_for('like_article', article_id=article.id) }}" method="post" id="like-article-form" style="display:inline;">
+                    <button type="submit" id="like-article-btn" aria-label="Me gusta artículo" style="background:none; border:none; cursor:pointer; font-size:28px; color:gray;">
+                        &#10084; <span id="article-like-count">{{ article.likes|length }}</span>
+                    </button>
+                </form>
+
+                {# Lista de comentarios (nivel superior) #}
+                <h3>Comentarios ({{ article.comments|length }})</h3>
+
+                {% for comment in article.comments if comment.parent_id is none %}
+                    {{ render_comment(comment) }}
+                {% else %}
+                    <p>No hay comentarios por ahora.</p>
+                {% endfor %}
+
+                {# Formulario para nuevo comentario nivel superior #}
+                <div class="mt-4">
+                    <h4>Deja un comentario</h4>
+                    <form action="{{ url_for('add_comment') }}" method="post">
+                        <input type="hidden" name="post_id" value="{{ article.id }}">
+                        <div class="mb-3">
+                            <input type="text" name="username" placeholder="Tu apodo" required class="form-control">
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <textarea id="comment-textarea" name="content" placeholder="Tu comentario" required class="form-control" rows="4"></textarea>
+                            <button type="button" id="emoji-btn" class="emoji-btn" aria-label="Emoji" style="position: absolute; right: 10px; bottom: 10px; border: none; background: transparent; font-size: 24px; cursor: pointer;">😀</button>
+                        </div>
+                        <button type="submit" class="btn btn-success">Enviar</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- Importar Emoji Button CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Gestión del botón Me gusta del artículo
+        const articleId = "{{ article.id }}";
+        const likeArticleBtn = document.getElementById('like-article-btn');
+        const likeArticleForm = document.getElementById('like-article-form');
+        const articleLikeCountSpan = document.getElementById('article-like-count');
+
+        const likedArticle = localStorage.getItem('liked_article_' + articleId) === 'true';
+        likeArticleBtn.style.color = likedArticle ? 'red' : 'gray';
+
+        likeArticleBtn.addEventListener('mouseenter', () => {
+            likeArticleBtn.style.color = 'red';
+        });
+        likeArticleBtn.addEventListener('mouseleave', () => {
+            if (!localStorage.getItem('liked_article_' + articleId)) {
+                likeArticleBtn.style.color = 'gray';
+            }
+        });
+
+        likeArticleForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (localStorage.getItem('liked_article_' + articleId)) {
+                alert('Ya has dado me gusta a este artículo.');
+                return;
+            }
+            likeArticleBtn.disabled = true;
+            fetch(likeArticleForm.action, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    likeArticleBtn.disabled = false;
+                    if (data.status === 'success') {
+                        likeArticleBtn.style.color = 'red';
+                        articleLikeCountSpan.textContent = data.likes_count;
+                        localStorage.setItem('liked_article_' + articleId, 'true');
+                    } else {
+                        alert('Error al dar me gusta.');
+                    }
+                })
+                .catch(() => {
+                    likeArticleBtn.disabled = false;
+                    alert('Error en la comunicación con el servidor.');
+                });
+        });
+
+        // Gestión botones Me gusta en comentarios
+        document.querySelectorAll('.like-comment-form').forEach(form => {
+            const commentId = form.dataset.commentId;
+            const btn = form.querySelector('button');
+            const likeCountSpan = btn.querySelector('.like-count');
+
+            const likedComment = localStorage.getItem('liked_comment_' + commentId) === 'true';
+            btn.style.color = likedComment ? 'red' : 'gray';
+
+            btn.addEventListener('mouseenter', () => {
+                btn.style.color = 'red';
+            });
+            btn.addEventListener('mouseleave', () => {
+                if (!localStorage.getItem('liked_comment_' + commentId)) {
+                    btn.style.color = 'gray';
+                }
+            });
+
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                if (localStorage.getItem('liked_comment_' + commentId)) {
+                    alert('Ya has dado me gusta a este comentario.');
+                    return;
+                }
+                btn.disabled = true;
+                fetch(form.action, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        btn.disabled = false;
+                        if (data.status === 'success') {
+                            btn.style.color = 'red';
+                            likeCountSpan.textContent = data.likes_count;
+                            localStorage.setItem('liked_comment_' + commentId, 'true');
+                        } else {
+                            alert('Error al dar me gusta al comentario.');
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
+                        alert('Error en la comunicación con el servidor.');
+                    });
+            });
+        });
+
+        // Mostrar/Ocultar formularios de respuesta
+        window.showReplyForm = function(commentId) {
+            document.getElementById('reply-form-' + commentId).style.display = 'block';
+        };
+        window.hideReplyForm = function(commentId) {
+            document.getElementById('reply-form-' + commentId).style.display = 'none';
+        };
+
+        // Inicializar Emoji Picker para textarea comentario principal
+        const pickerMain = new EmojiButton({ position: 'top-end', autoHide: true });
+        const emojiBtnMain = document.querySelector('#emoji-btn');
+        const textareaMain = document.querySelector('#comment-textarea');
+        pickerMain.on('emoji', emoji => {
+            const start = textareaMain.selectionStart;
+            const end = textareaMain.selectionEnd;
+            const text = textareaMain.value;
+            textareaMain.value = text.slice(0, start) + emoji + text.slice(end);
+            textareaMain.selectionStart = textareaMain.selectionEnd = start + emoji.length;
+            textareaMain.focus();
+        });
+        emojiBtnMain.addEventListener('click', () => {
+            pickerMain.togglePicker(emojiBtnMain);
+        });
+
+        // Inicializar Emoji Pickers para cada textarea de respuestas
+        document.querySelectorAll('[id^="emoji-btn-reply-"]').forEach(button => {
+            const idNum = button.id.split('-').pop();
+            const textarea = document.getElementById('reply-textarea-' + idNum);
+            const picker = new EmojiButton({ position: 'top-end', autoHide: true });
+            picker.on('emoji', emoji => {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                textarea.value = text.slice(0, start) + emoji + text.slice(end);
+                textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+                textarea.focus();
+            });
+            button.addEventListener('click', () => {
+                picker.togglePicker(button);
+            });
+        });
+
+    });
+</script>
+
+<style>
+    .btn-like:hover {
+        color: red !important;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Agregar Artículo - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="{{ url_for('admin_dashboard') }}">Panel de Administración</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_articles') }}">Artículos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_categories') }}">Categorías</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('list_admins') }}">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 800px;">
+    <h2>Agregar un nuevo artículo</h2>
+    <form method="POST" action="{{ url_for('add_article') }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Título</label>
+            <input type="text" class="form-control" id="title" name="title" required autofocus>
+        </div>
+
+        <div class="mb-3">
+            <label for="subtitle" class="form-label">Subtítulo</label>
+            <input type="text" class="form-control" id="subtitle" name="subtitle">
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Contenido</label>
+            <textarea class="form-control" id="content" name="content" rows="7" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Categoría</label>
+            <select class="form-select" id="category" name="category_id" required>
+                <option value="">-- Elige una categoría --</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label">Imagen (opcional)</label>
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
+
+        <button type="submit" class="btn btn-success">Agregar</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}

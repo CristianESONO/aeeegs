@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}Contacto - AEEEGS{% endblock %}
+
+{% block content %}
+<section class="my-5">
+    <div class="container">
+        <h1 class="text-center mb-4">Contáctanos</h1>
+        <p class="text-center mb-5 lead">¿Tienes preguntas, sugerencias o deseas unirte a nuestra asociación? ¡Estamos aquí para ayudarte!</p>
+
+        <div class="row">
+            <!-- Formulario de contacto -->
+            <div class="col-md-7">
+                <form method="POST" action="{{ url_for('contact') }}">
+                    <div class="mb-3">
+                        <label for="name">Nombre</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message">Mensaje</label>
+                        <textarea name="message" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                    </form>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+            </div>
+
+            <!-- Información de contacto -->
+            <div class="col-md-5">
+                <div class="bg-light p-4 rounded shadow-sm">
+                    <h5 class="mb-3">Información de contacto</h5>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Dakar, Senegal</p>
+                    <p><i class="fas fa-envelope me-2"></i>𝑨𝒆𝒆𝒆𝒈𝒔@𝒈𝒎𝒂𝒊𝒍.𝒄𝒐𝒎</p>
+                    <p><i class="fas fa-phone me-2"></i>+ 𝟐𝟐𝟏 𝟕𝟖 𝟓𝟗𝟔 𝟏𝟒 𝟕𝟗</p>
+                    <hr>
+                    <h6>Síguenos en redes sociales</h6>
+                    <p>
+                        <a href="https://www.facebook.com/AEEEGS" class="me-2"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="https://www.instagram.com/aeeegs_tv/?hl=fr-fr"><i class="fab fa-instagram fa-lg"></i></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

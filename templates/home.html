@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}Inicio - AEEEGS{% endblock %}
+
+{% block content %}
+<h1>Bienvenidos a AEEEGS</h1>
+
+<div class="row">
+  <div class="col-lg-8">
+    {% if articles|length > 0 %}
+      {# Artículo destacado (el primero) #}
+      {% set featured = articles[0] %}
+      <div class="card mb-4">
+        {% if featured.image_filename %}
+          <img class="card-img-top" src="{{ url_for('static', filename='uploads/' ~ featured.image_filename) }}" alt="imagen del artículo" />
+        {% endif %}
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+            <div>{{ featured.date_posted.strftime('%d %B %Y') }}</div>
+            <div>
+              <span style="color:red;">&#10084;</span> {{ featured.likes|length }}
+            </div>
+          </div>
+          <h2 class="card-title">{{ featured.title }}</h2>
+          <p class="card-text">{{ featured.content[:300] }}...</p>
+          <a href="{{ url_for('post', post_id=featured.id) }}" class="btn btn-primary">Leer más →</a>
+        </div>
+      </div>
+
+      {# Los demás artículos en 2 columnas #}
+      <div class="row">
+        {% for article in articles[1:] %}
+          <div class="col-lg-6">
+            <div class="card mb-4">
+              {% if article.image_filename %}
+                <img class="card-img-top" src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="imagen del artículo" />
+              {% endif %}
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+                  <div>{{ article.date_posted.strftime('%d %B %Y') }}</div>
+                  <div>
+                    <span style="color:red;">&#10084;</span> {{ article.likes|length }}
+                  </div>
+                </div>
+                <h2 class="card-title h4">{{ article.title }}</h2>
+                <p class="card-text">{{ article.content[:150] }}...</p>
+                <a href="{{ url_for('post', post_id=article.id) }}" class="btn btn-primary">Leer más →</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No hay artículos disponibles.</p>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <!-- Widgets (categorías, búsqueda, etc) -->
+    <div class="card mb-4">
+      <div class="card-header">Categorías</div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          {% for category in categories %}
+            <li><a href="{{ url_for('posts_by_category', category_id=category.id) }}">{{ category.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
