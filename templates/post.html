@@ -4,19 +4,21 @@
 
 {% block header %}
 {% set bg_url = url_for('static', filename='assets/img/post-bg.jpg') %}
-<header class="masthead" style="background-image: url('{{ bg_url }}')">
-    <div class="container position-relative px-4 px-lg-5">
+<header class="masthead" style="background-image: url('{{ bg_url }}'); background-size: cover; background-position: center; background-attachment: fixed; position: relative;">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1;"></div>
+
+    <div class="container position-relative px-4 px-lg-5" style="z-index: 2;">
         <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="col-md-10 col-lg-8 col-xl-7 text-center text-white py-5">
                 <div class="post-heading">
-                    <h1>{{ article.title }}</h1>
+                    <h1 class="display-3 fw-bolder mb-3">{{ article.title }}</h1>
                     {% if article.subtitle %}
-                    <h2 class="subheading">{{ article.subtitle }}</h2>
+                    <h2 class="subheading fs-4 text-opacity-75 mb-4">{{ article.subtitle }}</h2>
                     {% endif %}
-                    <span class="meta">
+                    <span class="meta fs-6">
                         Publicado por
-                        <a href="#!">{{ article.author.username }}</a>
-                        el {{ article.date_posted.strftime('%d %B %Y') }}
+                        <a href="#!" class="text-white fw-bold text-decoration-none border-bottom border-white border-2 pb-1 mx-1">{{ article.author.username }}</a>
+                        el <span class="fw-bold">{{ article.date_posted.strftime('%d %B %Y') }}</span>
                     </span>
                 </div>
             </div>
@@ -26,33 +28,39 @@
 {% endblock %}
 
 {% macro render_comment(comment, level=0) %}
-<div class="comment" style="margin-left: {{ level * 30 }}px; border-left: 2px solid #ccc; padding-left: 10px; margin-top: 15px;">
-    <p><strong>{{ comment.username }}</strong> <small class="text-muted">{{ comment.date_posted.strftime('%d %B %Y %H:%M') }}</small></p>
-    <p>{{ comment.content }}</p>
-    <p>
-        <form action="{{ url_for('like_comment', comment_id=comment.id) }}" method="post" class="like-comment-form" data-comment-id="{{ comment.id }}" style="display:inline;">
-            <button type="submit" class="btn-like" aria-label="Me gusta comentario" style="background:none; border:none; cursor:pointer; font-size:18px; color:gray;">
-                <span class="heart">&#10084;</span> <span class="like-count">{{ comment.likes or 0 }}</span>
-            </button>
-        </form>
-        <button class="btn btn-sm btn-link" onclick="showReplyForm({{ comment.id }})">Responder</button>
-    </p>
-    <div id="reply-form-{{ comment.id }}" class="reply-form" style="display:none; margin-top:10px;">
-        <form action="{{ url_for('add_comment') }}" method="post">
-            <input type="hidden" name="post_id" value="{{ article.id }}">
-            <input type="hidden" name="parent_id" value="{{ comment.id }}">
-            <div class="mb-2">
-                <input type="text" name="username" placeholder="Tu apodo" required class="form-control form-control-sm">
-            </div>
-            <div class="mb-2 position-relative">
-                <textarea id="reply-textarea-{{ comment.id }}" name="content" placeholder="Tu respuesta" required class="form-control form-control-sm" rows="2"></textarea>
-                <button type="button" id="emoji-btn-reply-{{ comment.id }}" class="emoji-btn" aria-label="Emoji" style="position: absolute; right: 8px; bottom: 8px; border: none; background: transparent; font-size: 20px; cursor: pointer;">😀</button>
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="hideReplyForm({{ comment.id }})">Cancelar</button>
-        </form>
+<div class="comment card border-0 shadow-sm mb-3 rounded-3" style="margin-left: {{ level * 20 }}px;">
+    <div class="card-body p-3">
+        <p class="mb-1 d-flex align-items-center">
+            <strong class="text-dark me-2">{{ comment.username }}</strong>
+            <small class="text-muted"><i class="far fa-clock me-1"></i>{{ comment.date_posted.strftime('%d %B %Y %H:%M') }}</small>
+        </p>
+        <p class="text-muted fw-normal fs-6 mb-2">{{ comment.content }}</p>
+        <div class="d-flex align-items-center">
+            <form action="{{ url_for('like_comment', comment_id=comment.id) }}" method="post" class="like-comment-form me-3" data-comment-id="{{ comment.id }}" style="display:inline;">
+                <button type="submit" class="btn-like border-0 bg-transparent p-0 d-flex align-items-center" aria-label="Me gusta comentario" style="cursor:pointer; font-size:1.1rem; color:var(--bs-gray-500); transition:color 0.2s ease;">
+                    <i class="fas fa-heart text-danger me-1"></i> <span class="like-count fw-bold text-secondary small">{{ comment.likes or 0 }}</span>
+                </button>
+            </form>
+            <button class="btn btn-sm btn-link text-decoration-none text-primary fw-medium px-0" onclick="showReplyForm({{ comment.id }})"><i class="fas fa-reply me-1"></i>Responder</button>
+        </div>
+        <div id="reply-form-{{ comment.id }}" class="reply-form mt-3 p-3 bg-light rounded-3 shadow-sm" style="display:none;">
+            <form action="{{ url_for('add_comment') }}" method="post">
+                <input type="hidden" name="post_id" value="{{ article.id }}">
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <div class="mb-3">
+                    <input type="text" name="username" placeholder="Tu apodo" required class="form-control form-control-sm rounded-pill px-3">
+                </div>
+                <div class="mb-3 position-relative">
+                    <textarea id="reply-textarea-{{ comment.id }}" name="content" placeholder="Tu respuesta" required class="form-control form-control-sm rounded-3 p-2" rows="2"></textarea>
+                    <button type="button" id="emoji-btn-reply-{{ comment.id }}" class="emoji-btn-trigger" data-textarea-id="reply-textarea-{{ comment.id }}" aria-label="Emoji" style="position: absolute; right: 8px; bottom: 8px; border: none; background: transparent; font-size: 1.2rem; cursor: pointer;">😀</button>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 me-2">Enviar</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="hideReplyForm({{ comment.id }})">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
-
     {% for reply in comment.replies %}
         {{ render_comment(reply, level + 1) }}
     {% endfor %}
@@ -60,66 +68,91 @@
 {% endmacro %}
 
 {% block content %}
-<article class="mb-4">
+<article class="mb-5">
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
 
+                {# NOUVEAU: Titre du post répliqué en haut du contenu #}
+                <h1 class="display-5 fw-bolder mb-4 text-dark text-center">{{ article.title }}</h1>
+                {% if article.subtitle %}
+                <h2 class="fs-4 text-muted mb-5 text-center">{{ article.subtitle }}</h2>
+                {% endif %}
+
                 {# Contenido del artículo #}
                 {% for paragraph in article.content.split('\n\n') %}
-                    <p>{{ paragraph }}</p>
+                    <p class="fs-5 mb-4 text-dark lh-lg">{{ paragraph }}</p>
                 {% endfor %}
 
                 {% if article.quote %}
-                <h2 class="section-heading">Continuación...</h2>
-                <blockquote class="blockquote">{{ article.quote }}</blockquote>
+                <h2 class="section-heading mt-5 mb-4 display-6 fw-bold text-dark">Continuación...</h2>
+                <blockquote class="blockquote border-start border-primary border-5 ps-4 py-2 my-5">
+                    <p class="mb-0 fs-4 fw-light text-secondary">{{ article.quote }}</p>
+                    <footer class="blockquote-footer mt-2 text-muted">AEEEGS</footer>
+                </blockquote>
                 {% endif %}
 
                 {% if article.extra %}
-                <p>{{ article.extra }}</p>
+                <p class="fs-5 mb-4 text-dark lh-lg">{{ article.extra }}</p>
                 {% endif %}
 
                 {% if article.image_filename %}
-                <img class="img-fluid" src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="Imagen del artículo" />
+                <img class="img-fluid rounded-3 shadow-sm my-4" src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="Imagen del artículo" />
                 {% endif %}
 
                 {% if article.caption %}
-                <span class="caption text-muted">{{ article.caption }}</span>
+                <span class="caption text-muted d-block text-center mb-5 fs-6">{{ article.caption }}</span>
                 {% endif %}
 
-                <p class="mt-4">
-                    Fuente: <a href="http://spaceipsum.com/">Space Ipsum</a> &middot; Imágenes: <a href="https://www.flickr.com/photos/nasacommons/">NASA</a>
+                <p class="mt-4 text-muted fs-6">
+                    Fuente: <a href="http://spaceipsum.com/" class="text-decoration-none text-primary fw-bold">Space Ipsum</a> &middot; Imágenes: <a href="https://www.flickr.com/photos/nasacommons/" class="text-decoration-none text-primary fw-bold">NASA</a>
                 </p>
 
-                {# Me gusta artículo como corazón #}
-                <form action="{{ url_for('like_article', article_id=article.id) }}" method="post" id="like-article-form" style="display:inline;">
-                    <button type="submit" id="like-article-btn" aria-label="Me gusta artículo" style="background:none; border:none; cursor:pointer; font-size:28px; color:gray;">
-                        &#10084; <span id="article-like-count">{{ article.likes|length }}</span>
-                    </button>
-                </form>
+                {# SECTION DEUXIÈME : Actions du Post (Likes, Partages, Commentaires) #}
+                <hr class="my-4">
+                <div class="d-flex justify-content-around align-items-center py-2 fs-5">
+                    <form action="{{ url_for('like_article', article_id=article.id) }}" method="post" id="like-article-form" style="display:inline;">
+                        <button type="submit" id="like-article-btn" aria-label="Me gusta artículo" class="border-0 bg-transparent p-0 d-flex align-items-center" style="cursor:pointer; font-size:1.8rem; color:var(--bs-gray-400); transition:color 0.2s ease;">
+                            <i class="fas fa-heart text-danger me-1"></i> <span id="article-like-count" class="fw-bold text-secondary fs-6">{{ article.likes|length }}</span>
+                        </button>
+                    </form>
 
-                {# Lista de comentarios (nivel superior) #}
-                <h3>Comentarios ({{ article.comments|length }})</h3>
+                    <div class="d-flex align-items-center text-muted">
+                        <i class="far fa-comment fs-5 me-2"></i>
+                        <span class="fw-bold fs-6">{{ article.comments|length }} Comentarios</span>
+                    </div>
+
+                    <button class="btn btn-link text-decoration-none text-muted p-0 fs-5" aria-label="Compartir artículo">
+                        <i class="fas fa-share-alt me-2"></i> Compartir
+                    </button>
+                </div>
+                <hr class="my-4">
+
+
+                {# Section des commentaires #}
+                <h3 class="mb-4 pb-2 border-bottom border-2 border-light text-dark fw-bold">
+                    <i class="far fa-comments me-2 text-primary"></i> Comentarios
+                </h3>
 
                 {% for comment in article.comments if comment.parent_id is none %}
                     {{ render_comment(comment) }}
                 {% else %}
-                    <p>No hay comentarios por ahora.</p>
+                    <p class="text-muted fst-italic">No hay comentarios por ahora. ¡Sé el primero en comentar!</p>
                 {% endfor %}
 
-                {# Formulario para nuevo comentario nivel superior #}
-                <div class="mt-4">
-                    <h4>Deja un comentario</h4>
+                {# Formulaire pour nouveau commentaire niveau supérieur #}
+                <div class="mt-5 p-4 bg-light rounded-4 shadow-sm">
+                    <h4 class="mb-4 text-dark fw-bold"><i class="fas fa-pencil-alt me-2 text-primary"></i>Deja un comentario</h4>
                     <form action="{{ url_for('add_comment') }}" method="post">
                         <input type="hidden" name="post_id" value="{{ article.id }}">
                         <div class="mb-3">
-                            <input type="text" name="username" placeholder="Tu apodo" required class="form-control">
+                            <input type="text" name="username" placeholder="Tu apodo" required class="form-control rounded-pill px-3 py-2">
                         </div>
                         <div class="mb-3 position-relative">
-                            <textarea id="comment-textarea" name="content" placeholder="Tu comentario" required class="form-control" rows="4"></textarea>
-                            <button type="button" id="emoji-btn" class="emoji-btn" aria-label="Emoji" style="position: absolute; right: 10px; bottom: 10px; border: none; background: transparent; font-size: 24px; cursor: pointer;">😀</button>
+                            <textarea id="comment-textarea" name="content" placeholder="Tu comentario" required class="form-control rounded-3 p-3" rows="4"></textarea>
+                            <button type="button" id="emoji-btn-main" class="emoji-btn-trigger" data-textarea-id="comment-textarea" aria-label="Emoji" style="position: absolute; right: 10px; bottom: 10px; border: none; background: transparent; font-size: 1.5rem; cursor: pointer;">😀</button>
                         </div>
-                        <button type="submit" class="btn btn-success">Enviar</button>
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 py-2 fw-bold text-uppercase">Enviar comentario</button>
                     </form>
                 </div>
 
@@ -128,146 +161,179 @@
     </div>
 </article>
 
-<!-- Importar Emoji Button CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.js"></script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Gestión del botón Me gusta del artículo
+        // --- Gestion du bouton "Me gusta" de l'article ---
         const articleId = "{{ article.id }}";
         const likeArticleBtn = document.getElementById('like-article-btn');
         const likeArticleForm = document.getElementById('like-article-form');
         const articleLikeCountSpan = document.getElementById('article-like-count');
+        const articleHeartIcon = likeArticleBtn ? likeArticleBtn.querySelector('.fas.fa-heart') : null;
 
-        const likedArticle = localStorage.getItem('liked_article_' + articleId) === 'true';
-        likeArticleBtn.style.color = likedArticle ? 'red' : 'gray';
-
-        likeArticleBtn.addEventListener('mouseenter', () => {
-            likeArticleBtn.style.color = 'red';
-        });
-        likeArticleBtn.addEventListener('mouseleave', () => {
-            if (!localStorage.getItem('liked_article_' + articleId)) {
-                likeArticleBtn.style.color = 'gray';
+        if (likeArticleBtn && articleHeartIcon) {
+            const likedArticle = localStorage.getItem('liked_article_' + articleId) === 'true';
+            if (likedArticle) {
+                articleHeartIcon.classList.add('text-danger');
+                articleHeartIcon.classList.remove('text-secondary');
+            } else {
+                articleHeartIcon.classList.add('text-secondary');
+                articleHeartIcon.classList.remove('text-danger');
             }
-        });
 
-        likeArticleForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (localStorage.getItem('liked_article_' + articleId)) {
-                alert('Ya has dado me gusta a este artículo.');
-                return;
-            }
-            likeArticleBtn.disabled = true;
-            fetch(likeArticleForm.action, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    likeArticleBtn.disabled = false;
-                    if (data.status === 'success') {
-                        likeArticleBtn.style.color = 'red';
-                        articleLikeCountSpan.textContent = data.likes_count;
-                        localStorage.setItem('liked_article_' + articleId, 'true');
-                    } else {
-                        alert('Error al dar me gusta.');
-                    }
-                })
-                .catch(() => {
-                    likeArticleBtn.disabled = false;
-                    alert('Error en la comunicación con el servidor.');
-                });
-        });
-
-        // Gestión botones Me gusta en comentarios
-        document.querySelectorAll('.like-comment-form').forEach(form => {
-            const commentId = form.dataset.commentId;
-            const btn = form.querySelector('button');
-            const likeCountSpan = btn.querySelector('.like-count');
-
-            const likedComment = localStorage.getItem('liked_comment_' + commentId) === 'true';
-            btn.style.color = likedComment ? 'red' : 'gray';
-
-            btn.addEventListener('mouseenter', () => {
-                btn.style.color = 'red';
+            likeArticleBtn.addEventListener('mouseenter', () => {
+                articleHeartIcon.classList.add('text-danger');
+                articleHeartIcon.classList.remove('text-secondary');
             });
-            btn.addEventListener('mouseleave', () => {
-                if (!localStorage.getItem('liked_comment_' + commentId)) {
-                    btn.style.color = 'gray';
+            likeArticleBtn.addEventListener('mouseleave', () => {
+                if (!localStorage.getItem('liked_article_' + articleId)) {
+                    articleHeartIcon.classList.add('text-secondary');
+                    articleHeartIcon.classList.remove('text-danger');
                 }
             });
 
-            form.addEventListener('submit', e => {
+            likeArticleForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                if (localStorage.getItem('liked_comment_' + commentId)) {
-                    alert('Ya has dado me gusta a este comentario.');
+                if (localStorage.getItem('liked_article_' + articleId)) {
+                    alert('Ya has dado me gusta a este artículo.');
                     return;
                 }
-                btn.disabled = true;
-                fetch(form.action, { method: 'POST' })
+                likeArticleBtn.disabled = true;
+                fetch(likeArticleForm.action, { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
-                        btn.disabled = false;
+                        likeArticleBtn.disabled = false;
                         if (data.status === 'success') {
-                            btn.style.color = 'red';
-                            likeCountSpan.textContent = data.likes_count;
-                            localStorage.setItem('liked_comment_' + commentId, 'true');
+                            articleHeartIcon.classList.add('text-danger');
+                            articleHeartIcon.classList.remove('text-secondary');
+                            articleLikeCountSpan.textContent = data.likes_count;
+                            localStorage.setItem('liked_article_' + articleId, 'true');
                         } else {
-                            alert('Error al dar me gusta al comentario.');
+                            alert('Error al dar me gusta.');
                         }
                     })
                     .catch(() => {
-                        btn.disabled = false;
+                        likeArticleBtn.disabled = false;
                         alert('Error en la comunicación con el servidor.');
                     });
             });
+        }
+
+
+        // --- Gestion des boutons "Me gusta" dans les commentaires ---
+        document.querySelectorAll('.like-comment-form').forEach(form => {
+            const commentId = form.dataset.commentId;
+            const btn = form.querySelector('button');
+            const heartIcon = btn.querySelector('.fas.fa-heart');
+            const likeCountSpan = btn.querySelector('.like-count');
+
+            if (btn && heartIcon) { // S'assurer que les éléments existent
+                const likedComment = localStorage.getItem('liked_comment_' + commentId) === 'true';
+                if (likedComment) {
+                    heartIcon.classList.add('text-danger');
+                    heartIcon.classList.remove('text-secondary');
+                } else {
+                    heartIcon.classList.add('text-secondary');
+                    heartIcon.classList.remove('text-danger');
+                }
+
+                btn.addEventListener('mouseenter', () => {
+                    heartIcon.classList.add('text-danger');
+                    heartIcon.classList.remove('text-secondary');
+                });
+                btn.addEventListener('mouseleave', () => {
+                    if (!localStorage.getItem('liked_comment_' + commentId)) {
+                        heartIcon.classList.add('text-secondary');
+                        heartIcon.classList.remove('text-danger');
+                    }
+                });
+
+                form.addEventListener('submit', e => {
+                    e.preventDefault();
+                    if (localStorage.getItem('liked_comment_' + commentId)) {
+                        alert('Ya has dado me gusta a este comentario.');
+                        return;
+                    }
+                    btn.disabled = true;
+                    fetch(form.action, { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            btn.disabled = false;
+                            if (data.status === 'success') {
+                                heartIcon.classList.add('text-danger');
+                                heartIcon.classList.remove('text-secondary');
+                                likeCountSpan.textContent = data.likes_count;
+                                localStorage.setItem('liked_comment_' + commentId, 'true');
+                            } else {
+                                alert('Error al dar me gusta al comentario.');
+                            }
+                        })
+                        .catch(() => {
+                            btn.disabled = false;
+                            alert('Error en la comunicación con el servidor.');
+                        });
+                });
+            }
         });
 
-        // Mostrar/Ocultar formularios de respuesta
+        // --- Afficher/Cacher formulaires de réponse ---
         window.showReplyForm = function(commentId) {
-            document.getElementById('reply-form-' + commentId).style.display = 'block';
+            const form = document.getElementById('reply-form-' + commentId);
+            if (form) {
+                form.style.display = 'block';
+                const textarea = document.getElementById('reply-textarea-' + commentId);
+                if (textarea) textarea.focus();
+            }
         };
         window.hideReplyForm = function(commentId) {
-            document.getElementById('reply-form-' + commentId).style.display = 'none';
+            const form = document.getElementById('reply-form-' + commentId);
+            if (form) {
+                form.style.display = 'none';
+            }
         };
 
-        // Inicializar Emoji Picker para textarea comentario principal
-        const pickerMain = new EmojiButton({ position: 'top-end', autoHide: true });
-        const emojiBtnMain = document.querySelector('#emoji-btn');
-        const textareaMain = document.querySelector('#comment-textarea');
-        pickerMain.on('emoji', emoji => {
-            const start = textareaMain.selectionStart;
-            const end = textareaMain.selectionEnd;
-            const text = textareaMain.value;
-            textareaMain.value = text.slice(0, start) + emoji + text.slice(end);
-            textareaMain.selectionStart = textareaMain.selectionEnd = start + emoji.length;
-            textareaMain.focus();
-        });
-        emojiBtnMain.addEventListener('click', () => {
-            pickerMain.togglePicker(emojiBtnMain);
-        });
+        // --- Initialisation des Emoji Pickers (Alternative) ---
+        // On va utiliser un événement de délégation pour les boutons emoji
+        // plutôt que d'attacher un listener à chaque bouton individuellement.
+        // Cela est plus robuste pour les éléments ajoutés dynamiquement.
 
-        // Inicializar Emoji Pickers para cada textarea de respuestas
-        document.querySelectorAll('[id^="emoji-btn-reply-"]').forEach(button => {
-            const idNum = button.id.split('-').pop();
-            const textarea = document.getElementById('reply-textarea-' + idNum);
-            const picker = new EmojiButton({ position: 'top-end', autoHide: true });
-            picker.on('emoji', emoji => {
-                const start = textarea.selectionStart;
-                const end = textarea.selectionEnd;
-                const text = textarea.value;
-                textarea.value = text.slice(0, start) + emoji + text.slice(end);
-                textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-                textarea.focus();
-            });
-            button.addEventListener('click', () => {
-                picker.togglePicker(button);
-            });
-        });
+        document.body.addEventListener('click', function(event) {
+            if (event.target.classList.contains('emoji-btn-trigger')) {
+                const button = event.target;
+                const textareaId = button.dataset.textareaId;
+                const textarea = document.getElementById(textareaId);
 
+                if (textarea) {
+                    const picker = new EmojiButton({
+                        position: 'top-end',
+                        autoHide: true,
+                        style: 'twemoji' // Essayons de forcer le style Twemoji
+                    });
+
+                    picker.on('emoji', emoji => {
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = textarea.value;
+                        textarea.value = text.slice(0, start) + emoji + text.slice(end);
+                        textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+                        textarea.focus();
+                    });
+
+                    picker.togglePicker(button);
+                }
+            }
+        });
     });
 </script>
 
 <style>
-    .btn-like:hover {
-        color: red !important;
+    .btn-like:hover .fas.fa-heart {
+        color: var(--bs-danger) !important;
+    }
+    .btn-like .fas.fa-heart {
+        transition: color 0.2s ease;
     }
 </style>
 

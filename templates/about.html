@@ -3,43 +3,73 @@
 {% block title %}Sobre Nosotros - AEEEGS{% endblock %}
 
 {% block content %}
-<section class="my-5">
+<section class="my-5 py-5 bg-light-subtle"> {# Ajout d'un fond léger et plus de padding #}
     <div class="container">
-        <h1 class="text-center mb-4">¿Quiénes somos?</h1>
+        {# Titre principal avec des styles plus modernes #}
+        <h1 class="display-4 fw-bolder text-center mb-5 text-primary">
+            <i class="fas fa-users me-3 text-secondary"></i> ¿Quiénes somos?
+        </h1>
         <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <p class="lead text-justify">
-                    La <strong>Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal (AEEEGS)</strong> es una organización sin fines de lucro que agrupa a los estudiantes y alumnos de Guinea Ecuatorial que residen y estudian en la República de Senegal. 
-                    Nuestro objetivo principal es <strong>promover la unidad, el apoyo mutuo y el desarrollo académico, cultural y social</strong> de nuestros miembros, así como representar sus intereses ante las instituciones educativas y diplomáticas.
+            <div class="col-lg-10 col-xl-8"> {# Colonnes légèrement plus étroites pour une meilleure lisibilité #}
+                <p class="lead text-justify fs-5 mb-4 text-dark-emphasis"> {# Taille de police plus grande et couleur de texte améliorée #}
+                    La <strong class="text-primary">Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal (AEEEGS)</strong> es una organización sin fines de lucro que agrupa a los estudiantes y alumnos de Guinea Ecuatorial que residen y estudian en la República de Senegal.
+                    Nuestro objetivo principal es <strong class="text-primary">promover la unidad, el apoyo mutuo y el desarrollo académico, cultural y social</strong> de nuestros miembros, así como representar sus intereses ante las instituciones educativas y diplomáticas.
                 </p>
-                <p class="text-justify">
+                <p class="text-justify fs-6 text-muted-emphasis lh-lg"> {# Couleur et interligne ajustés #}
                     Además de ser un espacio de solidaridad y confraternidad, la AEEEGS también organiza eventos culturales, conferencias, actividades deportivas y jornadas académicas para fortalecer los lazos entre los miembros y fomentar el espíritu de comunidad.
                 </p>
+                <div class="text-center mt-5"> {# Centré le bouton #}
+                    <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg rounded-pill shadow-sm px-4 py-2">
+                        <i class="fas fa-handshake me-2"></i> ¡Únete a Nosotros!
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<hr class="my-5">
+<hr class="my-5 border-2 border-primary opacity-25"> {# Ligne de séparation plus marquée #}
 
-<section class="my-5 bg-light py-5">
+<section class="my-5 py-5"> {# Padding vertical #}
     <div class="container">
-        <h2 class="text-center mb-4">Conoce a nuestro Presidente</h2>
-        <div class="row align-items-center">
-            <div class="col-md-4 text-center">
-                <img src="{{ url_for('static', filename='assets/img/presi.png') }}" alt="Presidente AEEEGS" class="img-fluid rounded-circle shadow" style="width: 250px; height: 250px; object-fit: cover;">
-            </div>
-            <div class="col-md-8">
-                <h3 class="fw-bold">𝐇𝐞́𝐜𝐭𝐨𝐫 𝐀𝐧𝐭𝐨𝐧𝐢𝐨 𝐍𝐝𝐨𝐧𝐠𝐨 𝐄𝐧𝐞𝐦𝐞</h3>
-                <p class="text-muted">Presidente de la AEEEGS</p>
-                <p class="text-justify">
+        <h2 class="display-5 fw-bolder text-center mb-5 text-dark">
+            <i class="fas fa-crown me-3 text-warning"></i> Conoce a nuestro Presidente
+        </h2>
+        <div class="row align-items-center flex-column-reverse flex-md-row"> {# Inversé l'ordre pour mobile #}
+            <div class="col-md-7 col-lg-8"> {# Ajustement de la largeur de colonne #}
+                <h3 class="fw-bold fs-3 text-primary mb-2">𝐇𝐞́𝐜𝐭𝐨𝐫 𝐀𝐧𝐭𝐨𝐧𝐢𝐨 𝐍𝐝𝐨𝐧𝐠𝐨 𝐄𝐧𝐞𝐦𝐞</h3>
+                <p class="text-muted fs-5 mb-4"><i class="fas fa-user-tie me-2"></i>Presidente de la AEEEGS</p>
+                <p class="text-justify fs-6 lh-lg text-dark">
                     Estudiante comprometido y líder entusiasta, el Presidente de la AEEEGS representa a toda la comunidad estudiantil ecuatoguineana en Senegal. Su visión se basa en el fortalecimiento de los lazos entre los miembros, el impulso de actividades formativas y culturales, y la defensa de los intereses académicos y sociales de todos los estudiantes.
                 </p>
-                <p class="text-justify">
+                <p class="text-justify fs-6 lh-lg text-dark">
                     Bajo su liderazgo, la AEEEGS continúa creciendo como una comunidad unida, activa y resiliente. Cree firmemente en el poder de la educación, la colaboración y la identidad cultural como motores de transformación.
                 </p>
+                <div class="d-flex justify-content-center justify-content-md-start mt-4"> {# Alignement des boutons de réseaux sociaux #}
+                    <a href="#" class="btn btn-outline-primary rounded-circle me-3 social-icon-btn" aria-label="Facebook del Presidente" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s ease;">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary rounded-circle me-3 social-icon-btn" aria-label="Twitter del Presidente" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s ease;">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary rounded-circle social-icon-btn" aria-label="LinkedIn del Presidente" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s ease;">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-5 col-lg-4 text-center mb-4 mb-md-0"> {# Ajustement de la largeur de colonne et marge pour mobile #}
+                <img src="{{ url_for('static', filename='assets/img/presi.jpg') }}" alt="Presidente AEEEGS" class="img-fluid rounded-circle shadow-lg border border-5 border-light" style="width: 280px; height: 280px; object-fit: cover; transform: scale(1.05); transition: transform 0.3s ease;"> {# Image plus grande, ombre plus prononcée, bordure et effet de zoom #}
             </div>
         </div>
     </div>
 </section>
+
+{# Petite section de style pour les effets de survol des boutons #}
+<style>
+    .social-icon-btn:hover {
+        background-color: var(--bs-primary);
+        color: var(--bs-white) !important;
+        transform: translateY(-3px); /* Petit effet de soulèvement */
+    }
+</style>
 {% endblock %}

@@ -3,70 +3,91 @@
 {% block title %}Inicio - AEEEGS{% endblock %}
 
 {% block content %}
-<h1>Bienvenidos a AEEEGS</h1>
+<h1 class="text-center mb-5 display-5 fw-bold text-primary">Nuestras Últimas Noticias</h1> {# Centered, larger, bold title with bottom margin #}
 
-<div class="row">
-  <div class="col-lg-8">
-    {% if articles|length > 0 %}
-      {# Artículo destacado (el primero) #}
-      {% set featured = articles[0] %}
-      <div class="card mb-4">
-        {% if featured.image_filename %}
-          <img class="card-img-top" src="{{ url_for('static', filename='uploads/' ~ featured.image_filename) }}" alt="imagen del artículo" />
-        {% endif %}
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
-            <div>{{ featured.date_posted.strftime('%d %B %Y') }}</div>
-            <div>
-              <span style="color:red;">&#10084;</span> {{ featured.likes|length }}
-            </div>
-          </div>
-          <h2 class="card-title">{{ featured.title }}</h2>
-          <p class="card-text">{{ featured.content[:300] }}...</p>
-          <a href="{{ url_for('post', post_id=featured.id) }}" class="btn btn-primary">Leer más →</a>
-        </div>
-      </div>
-
-      {# Los demás artículos en 2 columnas #}
-      <div class="row">
-        {% for article in articles[1:] %}
-          <div class="col-lg-6">
-            <div class="card mb-4">
-              {% if article.image_filename %}
-                <img class="card-img-top" src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="imagen del artículo" />
-              {% endif %}
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
-                  <div>{{ article.date_posted.strftime('%d %B %Y') }}</div>
-                  <div>
-                    <span style="color:red;">&#10084;</span> {{ article.likes|length }}
-                  </div>
+<div class="row justify-content-center"> {# Centering the main content row #}
+    <div class="col-lg-8">
+        {% if articles|length > 0 %}
+            {# Artículo destacado (el primero) #}
+            {% set featured = articles[0] %}
+            <div class="card mb-5 shadow-lg border-0 rounded-4 overflow-hidden"> {# Larger shadow, no border, rounded corners, overflow hidden for image #}
+                {% if featured.image_filename %}
+                    {# Added object-fit and height for consistent image sizing #}
+                    <img class="card-img-top img-fluid" src="{{ url_for('static', filename='uploads/' ~ featured.image_filename) }}" alt="imagen del artículo" style="height: 400px; object-fit: cover;" />
+                {% else %}
+                    {# Placeholder image if no image is available for consistency #}
+                    <img class="card-img-top img-fluid bg-light d-flex align-items-center justify-content-center text-muted" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctitle%3Eplaceholder%3C%2Ftitle%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23dee2e6%22%3E%3C%rect%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22sans-serif%22%20font-size%3D%2210%22%20fill%3D%22%23868e96%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3Eno%20image%3C%2Ftext%3E%3C%2Fsvg%3E" alt="No image available" style="height: 400px; object-fit: cover;" />
+                {% endif %}
+                <div class="card-body p-4 p-md-5"> {# Increased padding for card body #}
+                    <div class="d-flex justify-content-between align-items-center small text-muted mb-3 fs-6"> {# Increased font size for metadata #}
+                        <div><i class="far fa-calendar-alt me-1"></i> {{ featured.date_posted.strftime('%d %B %Y') }}</div>
+                        <div>
+                            <span class="text-danger me-1"><i class="fas fa-heart"></i></span> {{ featured.likes|length }} {# Changed heart to Font Awesome icon #}
+                        </div>
+                    </div>
+                    <h2 class="card-title mb-3 display-6 fw-bold text-dark">{{ featured.title }}</h2> {# Larger, bolder title #}
+                    <p class="card-text lead text-secondary mb-4">{{ featured.content[:300] }}...</p> {# Lead paragraph style, secondary color, more bottom margin #}
+                    <a href="{{ url_for('post', post_id=featured.id) }}" class="btn btn-primary btn-lg rounded-pill px-4 py-2 fw-bold text-uppercase">Leer más <i class="fas fa-arrow-right ms-2"></i></a> {# Larger, rounded, bold, uppercase button with arrow icon #}
                 </div>
-                <h2 class="card-title h4">{{ article.title }}</h2>
-                <p class="card-text">{{ article.content[:150] }}...</p>
-                <a href="{{ url_for('post', post_id=article.id) }}" class="btn btn-primary">Leer más →</a>
-              </div>
             </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p>No hay artículos disponibles.</p>
-    {% endif %}
-  </div>
 
-  <div class="col-lg-4">
-    <!-- Widgets (categorías, búsqueda, etc) -->
-    <div class="card mb-4">
-      <div class="card-header">Categorías</div>
-      <div class="card-body">
-        <ul class="list-unstyled mb-0">
-          {% for category in categories %}
-            <li><a href="{{ url_for('posts_by_category', category_id=category.id) }}">{{ category.name }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
+            {# Los demás artículos en 2 columnas #}
+            <div class="row">
+                {% for article in articles[1:] %}
+                    <div class="col-lg-6 mb-4"> {# Added bottom margin for consistent spacing #}
+                        <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden"> {# Small shadow, no border, rounded corners, height 100% for uniform cards #}
+                            {% if article.image_filename %}
+                                {# Consistent image sizing for grid articles #}
+                                <img class="card-img-top img-fluid" src="{{ url_for('static', filename='uploads/' ~ article.image_filename) }}" alt="imagen del artículo" style="height: 250px; object-fit: cover;" />
+                            {% else %}
+                                {# Placeholder image for grid articles #}
+                                <img class="card-img-top img-fluid bg-light d-flex align-items-center justify-content-center text-muted" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctitle%3Eplaceholder%3C%2Ftitle%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23e9ecef%22%3E%3C%23rect%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22sans-serif%22%20font-size%3D%2210%22%20fill%3D%22%23adb5bd%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3Eno%20image%3C%2Ftext%3E%3C%23svg%3E" alt="No image available" style="height: 250px; object-fit: cover;" />
+                            {% endif %}
+                            <div class="card-body p-4"> {# Increased padding #}
+                                <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+                                    <div><i class="far fa-calendar-alt me-1"></i> {{ article.date_posted.strftime('%d %B %Y') }}</div>
+                                    <div>
+                                        <span class="text-danger me-1"><i class="fas fa-heart"></i></span> {{ article.likes|length }}
+                                    </div>
+                                </div>
+                                <h2 class="card-title h5 fw-bold text-dark mb-2">{{ article.title }}</h2> {# Smaller title, bold #}
+                                <p class="card-text text-secondary mb-3">{{ article.content[:150] }}...</p> {# Secondary color, more bottom margin #}
+                                <a href="{{ url_for('post', post_id=article.id) }}" class="btn btn-sm btn-outline-primary rounded-pill fw-bold">Leer más <i class="fas fa-arrow-right ms-2"></i></a> {# Outline button, smaller, rounded #}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center lead text-muted py-5">No hay artículos disponibles para mostrar en este momento.</p> {# Centered message #}
+        {% endif %}
     </div>
-  </div>
+
+    {# Sidebar (Widgets) #}
+    <div class="col-lg-4">
+        <div class="card mb-4 shadow-sm border-0 rounded-3"> {# Shadow, no border, rounded corners #}
+            <div class="card-header bg-primary text-white fw-bold fs-5 p-3 rounded-top-3">Categorías</div> {# Primary background, white text, bold, larger font, rounded top corners #}
+            <div class="card-body p-4"> {# Increased padding #}
+                <ul class="list-unstyled mb-0">
+                    {% for category in categories %}
+                        <li class="mb-2"><a href="{{ url_for('posts_by_category', category_id=category.id) }}" class="text-decoration-none text-dark fw-medium d-block py-1 ps-2 rounded-2" style="transition: all 0.2s ease; border-left: 4px solid transparent;" onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--bs-primary'); this.style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--bs-light');" onmouseout="this.style.borderColor='transparent'; this.style.backgroundColor='transparent';"><i class="fas fa-folder-open me-2 text-primary"></i> {{ category.name }}</a></li> {# Styled list items #}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {# You can add more widgets here, e.g., a search bar, recent posts, etc. #}
+        <div class="card mb-4 shadow-sm border-0 rounded-3">
+            <div class="card-header bg-dark text-white fw-bold fs-5 p-3 rounded-top-3">Búsqueda</div>
+            <div class="card-body p-4">
+                <form method="get" action="{{ url_for('search') }}">
+                    <div class="input-group">
+                        <input name="q" class="form-control rounded-start-pill py-2" type="text" placeholder="Buscar..." aria-label="Enter search term..." aria-describedby="button-search" />
+                        <button class="btn btn-primary rounded-end-pill px-4" id="button-search" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
 </div>
 {% endblock %}

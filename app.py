@@ -116,9 +116,33 @@ def post(post_id):
 @app.route('/category/<int:category_id>')
 def posts_by_category(category_id):
     articles = Article.query.filter_by(category_id=category_id).order_by(Article.date_posted.desc()).all()
+    recent_articles = Article.query.order_by(Article.date_posted.desc()).limit(3).all()
     categories = Category.query.order_by(Category.name).all()
     category = Category.query.get_or_404(category_id)
-    return render_template('category_posts.html', articles=articles, categories=categories, category=category)
+    return render_template('category_posts.html', articles=articles, categories=categories, category=category,recent_articles=recent_articles)
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('q', '').strip()
+
+    if not query:
+        return redirect(url_for('index'))  # ou afficher un message
+
+    # Recherche dans le titre et le contenu
+    articles = Article.query.filter(
+        Article.title.ilike(f'%{query}%') |
+        Article.content.ilike(f'%{query}%')
+    ).order_by(Article.date_posted.desc()).all()
+
+    categories = Category.query.order_by(Category.name).all()
+
+    return render_template(
+        'search_results.html',
+        query=query,
+        articles=articles,
+        categories=categories
+    )
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -3,56 +3,114 @@
 {% block title %}Contacto - AEEEGS{% endblock %}
 
 {% block content %}
-<section class="my-5">
-    <div class="container">
-        <h1 class="text-center mb-4">Contáctanos</h1>
-        <p class="text-center mb-5 lead">¿Tienes preguntas, sugerencias o deseas unirte a nuestra asociación? ¡Estamos aquí para ayudarte!</p>
+<section class="py-5 bg-light-subtle"> {# Added padding and a light background for emphasis #}
+    <div class="container py-4">
+        {# Enhanced main heading #}
+        <h1 class="display-4 fw-bolder text-center mb-4 text-primary">
+            <i class="fas fa-handshake me-3 text-secondary"></i> Contáctanos
+        </h1>
+        {# Improved introductory paragraph #}
+        <p class="text-center mb-5 lead fs-5 text-muted-emphasis px-lg-5">
+            ¿Tienes preguntas, sugerencias o deseas unirte a nuestra asociación? ¡Estamos aquí para ayudarte! Completa el formulario o encuentra nuestros datos de contacto.
+        </p>
 
-        <div class="row">
-            <!-- Formulario de contacto -->
-            <div class="col-md-7">
-                <form method="POST" action="{{ url_for('contact') }}">
-                    <div class="mb-3">
-                        <label for="name">Nombre</label>
-                        <input type="text" name="name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email">Correo electrónico</label>
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message">Mensaje</label>
-                        <textarea name="message" class="form-control" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+        <div class="row justify-content-center"> {# Centered the row for better layout #}
+            <div class="col-md-7 col-lg-6 mb-4"> {# Adjusted column width for balance #}
+                <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5"> {# Card styling for the form #}
+                    <h3 class="mb-4 text-primary fw-bold"><i class="fas fa-paper-plane me-2"></i> Envíanos un Mensaje</h3>
+                    <form method="POST" action="{{ url_for('contact') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-medium text-dark">Nombre Completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text rounded-start-pill border-end-0 bg-light"><i class="fas fa-user text-muted"></i></span>
+                                <input type="text" name="name" id="name" class="form-control rounded-end-pill ps-3" placeholder="Tu nombre" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-medium text-dark">Correo Electrónico</label>
+                            <div class="input-group">
+                                <span class="input-group-text rounded-start-pill border-end-0 bg-light"><i class="fas fa-envelope text-muted"></i></span>
+                                <input type="email" name="email" id="email" class="form-control rounded-end-pill ps-3" placeholder="ejemplo@email.com" required>
+                            </div>
+                        </div>
+                        <div class="mb-4"> {# Increased margin #}
+                            <label for="message" class="form-label fw-medium text-dark">Tu Mensaje</label>
+                            <textarea name="message" id="message" class="form-control rounded-3 p-3" rows="6" placeholder="Escribe tu mensaje aquí..." required></textarea> {# Rounded and more padding #}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold text-uppercase py-3 shadow-sm">
+                            <i class="fas fa-comment-dots me-2"></i> Enviar Mensaje
+                        </button>
                     </form>
 
+                    {# Flash messages styling #}
                     {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
+                        {% if messages %}
+                            <div class="mt-4">
+                                {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show rounded-pill text-center d-flex align-items-center justify-content-center" role="alert">
+                                    {% if category == 'success' %}<i class="fas fa-check-circle me-2"></i>{% endif %}
+                                    {% if category == 'danger' %}<i class="fas fa-times-circle me-2"></i>{% endif %}
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     {% endwith %}
-
+                </div>
             </div>
 
-            <!-- Información de contacto -->
-            <div class="col-md-5">
-                <div class="bg-light p-4 rounded shadow-sm">
-                    <h5 class="mb-3">Información de contacto</h5>
-                    <p><i class="fas fa-map-marker-alt me-2"></i>Dakar, Senegal</p>
-                    <p><i class="fas fa-envelope me-2"></i>𝑨𝒆𝒆𝒆𝒈𝒔@𝒈𝒎𝒂𝒊𝒍.𝒄𝒐𝒎</p>
-                    <p><i class="fas fa-phone me-2"></i>+ 𝟐𝟐𝟏 𝟕𝟖 𝟓𝟗𝟔 𝟏𝟒 𝟕𝟗</p>
-                    <hr>
-                    <h6>Síguenos en redes sociales</h6>
-                    <p>
-                        <a href="https://www.facebook.com/AEEEGS" class="me-2"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="https://www.instagram.com/aeeegs_tv/?hl=fr-fr"><i class="fab fa-instagram fa-lg"></i></a>
-                    </p>
+            <div class="col-md-5 col-lg-4"> {# Adjusted column width for balance #}
+                <div class="card bg-white p-4 p-md-5 rounded-4 shadow-lg h-100 d-flex flex-column justify-content-between"> {# Card styling for info, full height #}
+                    <div> {# Wrapper for content to justify space #}
+                        <h3 class="mb-4 text-dark fw-bold"><i class="fas fa-info-circle me-2 text-secondary"></i> Información de Contacto</h3>
+                        <p class="mb-3 fs-5 text-muted"><i class="fas fa-map-marker-alt me-3 text-primary"></i>Dakar, Senegal</p>
+                        <p class="mb-3 fs-5 text-muted"><i class="fas fa-envelope me-3 text-primary"></i><a href="mailto:𝑨𝒆𝒆𝒆𝒈𝒔@𝒈𝒎𝒂𝒊𝒍.𝒄𝒐𝒎" class="text-decoration-none text-muted">𝑨𝒆𝒆𝒆𝒈𝒔@𝒈𝒎𝒂𝒊𝒍.𝒄𝒐𝒎</a></p>
+                        <p class="mb-4 fs-5 text-muted"><i class="fas fa-phone me-3 text-primary"></i><a href="tel:+221785961479" class="text-decoration-none text-muted">+ 𝟐𝟐𝟏 𝟕𝟖 𝟓𝟗𝟔 𝟏𝟒 𝟕𝟗</a></p>
+                    </div>
+
+                    <div> {# Wrapper for social media to push to bottom #}
+                        <hr class="my-4 border-primary opacity-25"> {# Stylish separator #}
+                        <h4 class="mb-3 text-dark fw-bold">Síguenos en Redes Sociales</h4>
+                        <div class="d-flex justify-content-center justify-content-md-start"> {# Centered on mobile, left-aligned on desktop #}
+                            <a href="https://www.facebook.com/AEEEGS" target="_blank" class="social-icon-btn rounded-circle me-3" aria-label="Facebook de AEEEGS">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.instagram.com/aeeegs_tv/?hl=fr-fr" target="_blank" class="social-icon-btn rounded-circle me-3" aria-label="Instagram de AEEEGS">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" target="_blank" class="social-icon-btn rounded-circle" aria-label="Twitter de AEEEGS">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            {# Add more social media links as needed #}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+{# Custom styles for social icons (similar to "About Us" page) #}
+<style>
+    .social-icon-btn {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        background-color: var(--bs-light); /* Light background for default */
+        color: var(--bs-primary); /* Primary color for icon */
+        border: 1px solid var(--bs-primary); /* Primary border */
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+    }
+    .social-icon-btn:hover {
+        background-color: var(--bs-primary);
+        color: var(--bs-white) !important;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Enhanced shadow on hover */
+    }
+</style>
 {% endblock %}
