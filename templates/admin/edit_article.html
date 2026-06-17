@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}Editar Artículo - Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand fw-bold" href="{{ url_for('admin_dashboard') }}">
+            <span class="text-primary">ADMIN</span><span class="text-white">AEEEGS</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_articles') }}">Artículos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_categories') }}">Categorías</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_departments') }}">Carpetas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_board') }}">Directiva</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('list_admins') }}">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-light btn-sm ms-lg-3 px-3 rounded-pill" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5 rounded-4 shadow-lg" style="background: white;">
+                <div class="mb-4">
+                    <a href="{{ url_for('admin_articles') }}" class="text-decoration-none text-muted small fw-bold">
+                        <i class="fas fa-arrow-left me-1"></i> VOLVER A LA LISTA
+                    </a>
+                </div>
+                <h2 class="fw-bold mb-4">{% if article %}Modificar{% else %}Crear{% endif %} Artículo</h2>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Título del Artículo</label>
+                            <input type="text" name="title" class="form-control rounded-3 p-3 bg-light border-0" value="{{ article.title if article else '' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Subtítulo (Opcional)</label>
+                            <input type="text" name="subtitle" class="form-control rounded-3 p-3 bg-light border-0" value="{{ article.subtitle if article else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Categoría</label>
+                            <select name="category_id" class="form-select rounded-3 p-3 bg-light border-0">
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if article and article.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Imagen de Portada</label>
+                            <input type="file" name="image" class="form-control rounded-3 p-3 bg-light border-0">
+                            {% if article and article.image_filename %}
+                                <div class="mt-2 text-muted small">Imagen actual: {{ article.image_filename }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Contenido</label>
+                            <textarea name="content" class="form-control rounded-3 p-3 bg-light border-0" rows="12" required>{{ article.content if article else '' }}</textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold w-100">
+                        <i class="fas fa-save me-2"></i> GUARDAR CAMBIOS
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+
+{% block title %}Nuestra Directiva - AEEEGS{% endblock %}
+
+{% block header %}
+<header class="masthead" style="background-image: url('{{ url_for('static', filename='assets/img/about-bg.jpg') }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Nuestra Directiva</h1>
+                    <span class="subheading">Liderazgo y compromiso en cada mandato</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <!-- Year Selector -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-6">
+                <div class="glass-card p-4 rounded-4 shadow-sm bg-white text-center">
+                    <h5 class="fw-bold mb-3 text-uppercase small text-muted">Explorar por año académico</h5>
+                    <form action="{{ url_for('directiva_public') }}" method="get" class="d-flex gap-2">
+                        <select name="term" class="form-select rounded-pill p-3 border-0 bg-light shadow-sm" onchange="this.form.submit()">
+                            {% for term in terms %}
+                            <option value="{{ term.id }}" {% if selected_term and selected_term.id == term.id %}selected{% endif %}>
+                                {{ term.start_year }} - {{ term.end_year }} ({% if term.is_current %}Actual{% else %}Histórico{% endif %})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <noscript><button type="submit" class="btn btn-primary rounded-pill px-4">Ver</button></noscript>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if selected_term %}
+        <!-- President Section -->
+        <div class="row justify-content-center mb-5 mt-4">
+            <div class="col-lg-10">
+                <div class="glass-card p-5 rounded-4 shadow-lg bg-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-5 text-center mb-4 mb-md-0">
+                            <div class="position-relative d-inline-block">
+                                {% if selected_term.president_image %}
+                                <img src="{{ url_for('static', filename='uploads/' ~ selected_term.president_image) }}" class="img-fluid rounded-4 shadow" style="max-width: 300px; height: 380px; object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light rounded-4 d-flex align-items-center justify-content-center shadow" style="width: 300px; height: 380px;">
+                                    <i class="fas fa-user text-muted display-1"></i>
+                                </div>
+                                {% endif %}
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow">PRESIDENTE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 ps-md-5">
+                            <h6 class="text-primary fw-bold text-uppercase small mb-2">{{ selected_term.start_year }} - {{ selected_term.end_year }}</h6>
+                            <h2 class="display-5 fw-bold mb-3">{{ selected_term.president_name }}</h2>
+                            <p class="lead text-muted fst-italic mb-4">
+                                "{{ selected_term.president_bio or 'Dedicados al progreso y bienestar de la comunidad estudiantil.' }}"
+                            </p>
+                            
+                            <h5 class="fw-bold mb-3 small text-uppercase">Cúpula Ejecutiva</h5>
+                            <div class="row g-2">
+                                {% for member in selected_term.members if not member.department_id %}
+                                <div class="col-sm-6">
+                                    <div class="d-flex align-items-center p-2 rounded-3 hover-light" style="background: rgba(0,0,0,0.02);">
+                                        {% if member.image_filename %}
+                                        <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid white;">
+                                        {% else %}
+                                        <div class="bg-white rounded-circle me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;">
+                                            <i class="fas fa-user text-muted small"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="overflow-hidden">
+                                            <div class="fw-bold text-dark text-truncate" style="font-size: 0.8rem;">{{ member.name }}</div>
+                                            <div class="text-primary extra-small" style="font-size: 0.7rem;">{{ member.role }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Departments Grid -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-5 mt-5">
+                    <h3 class="fw-bold">Carpetas de Trabajo</h3>
+                    <p class="text-muted">Equipos especializados por área de impacto</p>
+                </div>
+                
+                <div class="row g-4">
+                    {% for dept in departments %}
+                    {% set dept_members = selected_term.members|selectattr("department_id", "equalto", dept.id)|list %}
+                    {% if dept_members %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="glass-card p-4 rounded-4 shadow-sm h-100 bg-white border-top border-primary border-4">
+                            <h4 class="fw-bold text-primary mb-1">{{ dept.name }}</h4>
+                            <p class="text-muted extra-small mb-3">{{ dept.description }}</p>
+                            
+                            <div class="dept-members-list">
+                                {% for member in dept_members|sort(attribute='role') %}
+                                <div class="d-flex align-items-center mb-2 p-2 rounded-3 {% if 'Responsable' in member.role %}bg-primary bg-opacity-10 border border-primary border-opacity-10{% else %}bg-light{% endif %}">
+                                    {% if member.image_filename %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle me-2 shadow-sm" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid white;">
+                                    {% else %}
+                                    <div class="bg-white rounded-circle me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px; border: 2px solid white;">
+                                        <i class="fas fa-user-circle text-muted" style="font-size: 0.8rem;"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="overflow-hidden">
+                                        <div class="fw-bold text-dark text-truncate" style="font-size: 0.75rem;">{{ member.name }}</div>
+                                        <div class="text-primary extra-small" style="font-size: 0.65rem;">{{ member.role }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-search display-1 text-muted mb-4"></i>
+            <h2 class="text-muted">No se encontró información para este periodo.</h2>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .extra-small {
+        font-size: 0.7rem;
+    }
+    .hover-light:hover {
+        background: rgba(0,0,0,0.05) !important;
+        transition: background 0.3s ease;
+    }
+</style>
+{% endblock %}

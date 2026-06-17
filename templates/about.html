@@ -1,0 +1,184 @@
+{% extends "layout.html" %}
+
+{% block title %}Sobre Nosotros - AEEEGS{% endblock %}
+
+{% block header %}
+<header class="masthead" style="background-image: url('{{ url_for('static', filename='assets/img/about-bg.jpg') }}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Nuestra Historia</h1>
+                    <span class="subheading">Unidos por la educación y la fraternidad</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Association Intro -->
+                <div class="glass-card p-5 rounded-4 shadow-lg mb-5" style="background: white; border: 1px solid rgba(0,0,0,0.05);">
+                    <h2 class="display-5 fw-bold text-primary mb-4">¿Quiénes somos?</h2>
+                    <p class="lead fs-4 text-dark mb-4">
+                        La <strong class="text-primary">Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal (AEEEGS)</strong> es una comunidad vibrante dedicada al apoyo mutuo.
+                    </p>
+                    <div class="content-text fs-5 lh-lg text-muted">
+                        <p>Promovemos la unidad y el desarrollo académico de nuestros miembros, representándolos dignamente ante las instituciones. Nuestro compromiso va más allá de lo académico; fomentamos la identidad cultural y la solidaridad entre todos los ecuatoguineanos en Senegal.</p>
+                    </div>
+                </div>
+
+                <!-- Current President & Executive Section -->
+                {% if current_term %}
+                <div class="president-section mt-5 pt-5 mb-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <div class="img-container position-relative d-inline-block p-1 bg-white shadow-lg rounded-4">
+                                {% if current_term.president_image %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ current_term.president_image) }}" alt="{{ current_term.president_name }}" class="img-fluid rounded-4" style="width: 320px; height: 380px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='assets/img/presi.jpg') }}" alt="Presidente AEEEGS" class="img-fluid rounded-4" style="width: 320px; height: 380px; object-fit: cover;">
+                                {% endif %}
+                                <div class="position-absolute bottom-0 start-50 translate-middle-x mb-[-20px]">
+                                    <span class="badge bg-primary px-4 py-2 rounded-pill shadow-lg border border-3 border-white">PRESIDENTE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 ps-md-5">
+                            <h6 class="text-primary fw-bold text-uppercase small mb-2">Mandato Actual ({{ current_term.start_year }}-{{ current_term.end_year }})</h6>
+                            <h2 class="display-6 fw-bold text-dark mb-1">{{ current_term.president_name }}</h2>
+                            <p class="fs-5 text-muted lh-base italic mt-3 mb-4">
+                                "{{ current_term.president_bio or 'Trabajando juntos por una comunidad estudiantil más fuerte y unida.' }}"
+                            </p>
+                            
+                            <!-- Executive Team (Those not in carpetas - e.g. VP, Secretary General) -->
+                            <div class="row g-3">
+                                {% for member in current_term.members if not member.department_id %}
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-2 rounded-3 hover-light">
+                                        {% if member.image_filename %}
+                                            <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle me-3" style="width: 45px; height: 45px; object-fit: cover; border: 2px solid var(--primary-color);">
+                                        {% else %}
+                                            <div class="bg-primary bg-opacity-10 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; border: 2px solid var(--primary-color);">
+                                                <i class="fas fa-user text-primary"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="fw-bold text-dark small">{{ member.role }}</div>
+                                            <div class="text-muted" style="font-size: 0.9rem;">{{ member.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Departments (Carpetas) Section -->
+                {% if departments %}
+                <div class="carpetas-section mt-5 py-5 border-top">
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold">Nuestras Carpetas</h2>
+                        <p class="text-muted">El equipo de trabajo que hace posible cada actividad de la AEEEGS</p>
+                    </div>
+                    
+                    <div class="row g-4">
+                        {% for dept in departments %}
+                        {% set dept_members = current_term.members|selectattr("department_id", "equalto", dept.id)|list %}
+                        {% if dept_members %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="glass-card p-4 rounded-4 shadow-sm border h-100 bg-white">
+                                <h4 class="fw-bold text-primary mb-1">{{ dept.name }}</h4>
+                                <p class="text-muted extra-small mb-3">{{ dept.description }}</p>
+                                
+                                <div class="dept-members-list">
+                                    {% for member in dept_members|sort(attribute='role') %}
+                                    <div class="d-flex align-items-center mb-2 p-2 rounded-3 bg-light border border-light">
+                                        {% if member.image_filename %}
+                                            <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle me-2 shadow-sm" style="width: 35px; height: 35px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="bg-white rounded-circle me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;">
+                                                <i class="fas fa-user text-muted small"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="overflow-hidden">
+                                            <div class="fw-bold text-dark text-truncate" style="font-size: 0.75rem;">{{ member.name }}</div>
+                                            <div class="text-primary extra-small" style="font-size: 0.65rem;">{{ member.role }}</div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                <!-- Board History Section -->
+                <div class="history-section mt-5 py-5 border-top">
+                    <h2 class="fw-bold mb-5 text-center"><i class="fas fa-history text-secondary me-2"></i> Historial de Presidentes</h2>
+                    <div class="row g-4">
+                        {% for term in history %}
+                            {% if not term.is_current %}
+                            <div class="col-md-6 mb-4">
+                                <div class="glass-card p-4 rounded-4 shadow-sm border h-100 transition-hover bg-white">
+                                    <div class="d-flex align-items-center">
+                                        {% if term.president_image %}
+                                            <img src="{{ url_for('static', filename='uploads/' ~ term.president_image) }}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #eee;">
+                                        {% else %}
+                                            <div class="bg-light rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                <i class="fas fa-user text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h5 class="fw-bold m-0">{{ term.president_name }}</h5>
+                                            <span class="text-primary small fw-bold">{{ term.start_year }} - {{ term.end_year }}</span>
+                                        </div>
+                                    </div>
+                                    {% if term.members %}
+                                    <div class="mt-3 text-muted small">
+                                        <strong>Cúpula:</strong> 
+                                        {% for member in term.members if not member.department_id %}
+                                            {{ member.name }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-center text-muted col-12">No hay registros históricos disponibles.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .hover-light:hover {
+        background-color: rgba(0,0,0,0.02);
+        transition: background 0.2s;
+    }
+    .border-dashed {
+        border-style: dashed !important;
+        border-width: 2px !important;
+    }
+</style>
+{% endblock %}

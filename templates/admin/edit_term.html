@@ -1,0 +1,203 @@
+{% extends "layout.html" %}
+
+{% block title %}Editar Periodo - AEEEGS Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand fw-bold" href="{{ url_for('admin_dashboard') }}">
+            <span class="text-primary">ADMIN</span><span class="text-white">AEEEGS</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_articles') }}">Artículos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_categories') }}">Categorías</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_departments') }}">Carpetas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_board') }}">Directiva</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('list_admins') }}">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-light btn-sm ms-lg-3 px-3 rounded-pill" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Edit Term Form -->
+            <div class="glass-card p-4 p-md-5 rounded-4 shadow-lg mb-5" style="background: white;">
+                <div class="mb-4">
+                    <a href="{{ url_for('admin_board') }}" class="text-decoration-none text-muted small fw-bold">
+                        <i class="fas fa-arrow-left me-1"></i> VOLVER AL LISTADO
+                    </a>
+                </div>
+                <h2 class="fw-bold mb-4">Editar Periodo Directivo</h2>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Año Inicio</label>
+                            <input type="number" name="start_year" class="form-control rounded-3 p-3 bg-light border-0" value="{{ term.start_year }}" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Año Fin</label>
+                            <input type="number" name="end_year" class="form-control rounded-3 p-3 bg-light border-0" value="{{ term.end_year }}" required>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Nombre del Presidente</label>
+                            <input type="text" name="president_name" class="form-control rounded-3 p-3 bg-light border-0" value="{{ term.president_name }}" required>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Imagen del Presidente</label>
+                            <input type="file" name="president_image" class="form-control rounded-3 p-3 bg-light border-0">
+                            {% if term.president_image %}
+                                <div class="mt-2 text-muted small text-truncate">Imagen actual: {{ term.president_image }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Biografía/Cita</label>
+                            <textarea name="president_bio" class="form-control rounded-3 p-3 bg-light border-0" rows="3">{{ term.president_bio }}</textarea>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_current" id="isCurrent" {% if term.is_current %}checked{% endif %}>
+                                <label class="form-check-label fw-bold" for="isCurrent">Marcar como Periodo Actual</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold w-100">
+                        <i class="fas fa-sync me-2"></i> ACTUALIZAR PRESIDENTE
+                    </button>
+                </form>
+            </div>
+
+            <!-- Management of Carpetas -->
+            <div class="glass-card p-4 p-md-5 rounded-4 shadow-lg mb-5" style="background: white;">
+                <h3 class="fw-bold mb-4"><i class="fas fa-folder-open text-primary me-2"></i> Carpetas (Departamentos)</h3>
+                
+                {% for dept in departments %}
+                {% set dept_members = term.members|selectattr("department_id", "equalto", dept.id)|list %}
+                <div class="border rounded-4 p-4 mb-4 bg-light">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="fw-bold m-0 text-primary">{{ dept.name }}</h4>
+                            <p class="text-muted small m-0">{{ dept.description }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Members of this Carpeta in THIS term -->
+                    <div class="row g-3">
+                        {% for member in dept_members %}
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center">
+                                {% if member.image_filename %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-secondary bg-opacity-10 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold small">{{ member.name }}</div>
+                                    <div class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill small" style="font-size: 0.7rem;">{{ member.role }}</div>
+                                </div>
+                                <form action="{{ url_for('delete_board_member', member_id=member.id) }}" method="post">
+                                    <button class="btn btn-link text-danger p-0"><i class="fas fa-times"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Add Member to this specific Carpeta/Term -->
+                        <div class="col-12 mt-3 p-3 bg-white rounded-4 border border-dashed">
+                            <h6 class="fw-bold small text-uppercase text-muted mb-2">Asignar Miembro ({{ term.start_year }})</h6>
+                            <form action="{{ url_for('add_board_member', term_id=term.id) }}" method="post" enctype="multipart/form-data" class="row g-2">
+                                <input type="hidden" name="department_id" value="{{ dept.id }}">
+                                <div class="col-md-4">
+                                    <input type="text" name="name" class="form-control form-control-sm rounded-pill" placeholder="Nombre completo" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="role" class="form-select form-select-sm rounded-pill" required>
+                                        <option value="Responsable de Carpeta">Responsable de Carpeta</option>
+                                        <option value="Miembro de Carpeta" selected>Miembro de Carpeta</option>
+                                        <option value="Secretario de Carpeta">Secretario de Carpeta</option>
+                                        <option value="Tesorero de Carpeta">Tesorero de Carpeta</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="file" name="image" class="form-control form-control-sm rounded-pill">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100 rounded-pill">Añadir</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('admin_departments') }}" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="fas fa-plus-circle me-1"></i> Gestionar Catálogo de Carpetas
+                    </a>
+                </div>
+            </div>
+
+            <!-- Other Board Members (NOT in carpetas) -->
+            <div class="glass-card p-4 p-md-5 rounded-4 shadow-lg" style="background: white;">
+                <h3 class="fw-bold mb-4"><i class="fas fa-users text-dark me-2"></i> Otros Miembros Globales</h3>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>Miembro</th>
+                                <th>Cargo</th>
+                                <th class="text-end">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in term.members if not member.department_id %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if member.image_filename %}
+                                            <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                        {% endif %}
+                                        {{ member.name }}
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">{{ member.role }}</span></td>
+                                <td class="text-end">
+                                    <form action="{{ url_for('delete_board_member', member_id=member.id) }}" method="post">
+                                        <button class="btn btn-link text-danger p-0"><i class="fas fa-times-circle"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <form action="{{ url_for('add_board_member', term_id=term.id) }}" method="post" enctype="multipart/form-data" class="row g-2 mt-3">
+                    <div class="col-md-4">
+                        <input type="text" name="name" class="form-control rounded-pill p-2" placeholder="Nombre" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="role" class="form-control rounded-pill p-2" placeholder="Cargo (Ej. Vicepresidente)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="file" name="image" class="form-control rounded-pill p-2">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-primary w-100 rounded-pill p-2">Añadir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

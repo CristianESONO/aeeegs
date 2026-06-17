@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+
+{% block title %}Gestionar Carpetas - AEEEGS Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand fw-bold" href="{{ url_for('admin_dashboard') }}">
+            <span class="text-primary">ADMIN</span><span class="text-white">AEEEGS</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_articles') }}">Artículos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_categories') }}">Categorías</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_departments') }}">Carpetas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_board') }}">Directiva</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('list_admins') }}">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-light btn-sm ms-lg-3 px-3 rounded-pill" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <!-- Sidebar: Global Departments List -->
+        <div class="col-lg-4 mb-4">
+            <div class="glass-card p-4 rounded-4 shadow-sm h-100" style="background: white;">
+                <h4 class="fw-bold mb-4">Catálogo de Carpetas</h4>
+                
+                <div class="list-group list-group-flush mb-4">
+                    {% for dept in depts %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-3">
+                        <div>
+                            <div class="fw-bold">{{ dept.name }}</div>
+                            <small class="text-muted">{{ dept.description }}</small>
+                        </div>
+                        <form action="{{ url_for('delete_department', dept_id=dept.id) }}" method="post" onsubmit="return confirm('¿Eliminar esta carpeta del catálogo global?');">
+                            <button class="btn btn-link text-danger p-0"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <hr>
+                
+                <h5 class="fw-bold mb-3">Nueva Carpeta Global</h5>
+                <form action="{{ url_for('add_department') }}" method="post">
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control rounded-pill border-light bg-light p-3" placeholder="Nombre (Ej: Educación)" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="description" class="form-control rounded-3 border-light bg-light p-3" placeholder="Descripción breve" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill p-3 fw-bold">CREAR CARPETA</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main: Assign Members to Carpetas -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5 rounded-4 shadow-lg mb-5" style="background: white;">
+                <h3 class="fw-bold mb-2">Asignación de Miembros</h3>
+                <p class="text-muted mb-4">Asigna responsables a las carpetas para un periodo lectivo específico.</p>
+
+                <!-- Assignment Form -->
+                <div class="bg-light p-4 rounded-4 border border-primary border-opacity-10 mb-5">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-user-plus text-primary me-2"></i> Asignar Nuevo Responsable</h5>
+                    <form action="{{ url_for('add_board_member_standalone') }}" method="post" enctype="multipart/form-data" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Periodo (Mandato)</label>
+                            <select name="term_id" class="form-select rounded-pill p-3 border-0 shadow-sm" required>
+                                <option value="" disabled selected>Selecciona el año...</option>
+                                {% for term in terms %}
+                                <option value="{{ term.id }}">{{ term.start_year }} - {{ term.end_year }} ({{ term.president_name }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Carpeta</label>
+                            <select name="department_id" class="form-select rounded-pill p-3 border-0 shadow-sm" required>
+                                <option value="" disabled selected>Selecciona la carpeta...</option>
+                                {% for dept in depts %}
+                                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Nombre del Miembro</label>
+                            <input type="text" name="name" class="form-control rounded-pill p-3 border-0 shadow-sm" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Cargo</label>
+                            <select name="role" class="form-select rounded-pill p-3 border-0 shadow-sm" required>
+                                <option value="Responsable de Carpeta">Responsable de Carpeta</option>
+                                <option value="Miembro de Carpeta" selected>Miembro de Carpeta</option>
+                                <option value="Secretario de Carpeta">Secretario de Carpeta</option>
+                                <option value="Tesorero de Carpeta">Tesorero de Carpeta</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-uppercase">Foto de Perfil</label>
+                            <input type="file" name="image" class="form-control rounded-pill p-3 border-0 shadow-sm">
+                        </div>
+                        <div class="col-12 mt-4 text-end">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold">GUARDAR ASIGNACIÓN</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h4 class="fw-bold mb-4">Historial Reciente por Carpeta</h4>
+                {% for dept in depts %}
+                <div class="mb-5">
+                    <h5 class="fw-bold text-primary border-bottom pb-2">{{ dept.name }}</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr class="small text-uppercase text-muted">
+                                    <th>Imagen</th>
+                                    <th>Nombre</th>
+                                    <th>Periodo</th>
+                                    <th>Cargo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set members = dept.members|sort(attribute='term.start_year', reverse=True) %}
+                                {% for member in members %}
+                                <tr>
+                                    <td>
+                                        {% if member.image_filename %}
+                                        <img src="{{ url_for('static', filename='uploads/' ~ member.image_filename) }}" class="rounded-circle shadow-sm" style="width: 40px; height: 40px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-muted small"></i>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold">{{ member.name }}</td>
+                                    <td><span class="badge bg-light text-dark border">{{ member.term.start_year }} - {{ member.term.end_year }}</span></td>
+                                    <td><span class="badge bg-primary bg-opacity-10 text-primary px-3 rounded-pill">{{ member.role }}</span></td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted fst-italic">No hay miembros asignados aún.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

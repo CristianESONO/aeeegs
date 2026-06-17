@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}Iniciar Sesión - AEEEGS Admin{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-100" style="margin-top: -50px;">
+    <div class="col-md-5 col-lg-4">
+        <div class="glass-card p-4 p-md-5 rounded-4 shadow-lg text-center" style="background: white;">
+            <a href="{{ url_for('home') }}" class="d-inline-block mb-4 text-decoration-none">
+                <h1 class="fw-bold" style="letter-spacing: -2px;">
+                    <span class="text-primary">AEE</span><span class="text-success">EGS</span>
+                </h1>
+            </a>
+            <h4 class="fw-bold mb-4">Panel de Control</h4>
+            
+            <form action="{{ url_for('login') }}" method="POST">
+                <div class="mb-3 text-start">
+                    <label class="form-label small fw-bold text-uppercase">Nombre de Usuario</label>
+                    <input type="text" name="username" class="form-control rounded-pill px-4 py-3 bg-light border-0" placeholder="admin" required autofocus>
+                </div>
+                <div class="mb-4 text-start">
+                    <label class="form-label small fw-bold text-uppercase">Contraseña</label>
+                    <input type="password" name="password" class="form-control rounded-pill px-4 py-3 bg-light border-0" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold shadow-sm">
+                    ENTRAR <i class="fas fa-sign-in-alt ms-2"></i>
+                </button>
+            </form>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mt-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} rounded-pill small py-2">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="mt-5">
+                <a href="{{ url_for('home') }}" class="text-muted small text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i> Volver al sitio principal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
