@@ -48,30 +48,26 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 def run_migrations_safely():
-    from flask_migrate import upgrade
     from models import Admin
     from werkzeug.security import generate_password_hash
-    
-    for attempt in range(5):
-        try:
-            upgrade()
-            if Admin.query.count() == 0:
-                default_admin = Admin(
-                    username=os.environ.get('ADMIN_USERNAME', 'admin'),
-                    password=generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'admin123'))
-                )
-                db.session.add(default_admin)
-                db.session.commit()
-                print("Default admin created.")
-            break
-        except Exception as e:
-            if "locked" in str(e).lower() or "busy" in str(e).lower():
-                import time
-                time.sleep(1)
-            else:
-                print(f"Database init warning (attempt {attempt+1}): {e}")
-                if attempt == 4:
-                    raise e
+
+    try:
+        # db.create_all() crée toutes les tables manquantes définies dans models.py
+        # C'est plus fiable que les migrations Alembic sur un filesystem éphémère (Render)
+        db.create_all()
+        print("Database tables created/verified successfully.")
+
+        if Admin.query.count() == 0:
+            default_admin = Admin(
+                username=os.environ.get('ADMIN_USERNAME', 'admin'),
+                password=generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'admin123'))
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            print("Default admin created.")
+    except Exception as e:
+        print(f"Database init error: {e}")
+        raise e
 
 import sys
 is_cli = len(sys.argv) > 1 and sys.argv[1] in ['db', 'shell', 'run']
