@@ -35,7 +35,11 @@ instance_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instan
 os.makedirs(instance_path, exist_ok=True)
 
 db_path = os.path.join(instance_path, 'site.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+db_url = os.environ.get('DATABASE_URL', f'sqlite:///{db_path}')
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 
