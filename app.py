@@ -87,6 +87,10 @@ def login_required(f):
 
 # ===== ROUTES =====
 
+@app.route('/admin')
+def admin_redirect():
+    return redirect(url_for('admin_dashboard'))
+
 @app.route('/')
 def home():
     page = request.args.get('page', 1, type=int)
