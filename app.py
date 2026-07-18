@@ -47,6 +47,38 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 db.init_app(app)
 migrate = Migrate(app, db)
 
+def run_migrations_safely():
+    from flask_migrate import upgrade
+    from models import Admin
+    from werkzeug.security import generate_password_hash
+    
+    for attempt in range(5):
+        try:
+            upgrade()
+            if Admin.query.count() == 0:
+                default_admin = Admin(
+                    username=os.environ.get('ADMIN_USERNAME', 'admin'),
+                    password=generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'admin123'))
+                )
+                db.session.add(default_admin)
+                db.session.commit()
+                print("Default admin created.")
+            break
+        except Exception as e:
+            if "locked" in str(e).lower() or "busy" in str(e).lower():
+                import time
+                time.sleep(1)
+            else:
+                print(f"Database init warning (attempt {attempt+1}): {e}")
+                if attempt == 4:
+                    raise e
+
+import sys
+is_cli = len(sys.argv) > 1 and sys.argv[1] in ['db', 'shell', 'run']
+if not is_cli:
+    with app.app_context():
+        run_migrations_safely()
+
 # Décorateur pour routes protégées admin
 def login_required(f):
     @wraps(f)
@@ -604,19 +636,4 @@ def add_board_member_standalone():
 
 # === MAIN ===
 if __name__ == '__main__':
-    with app.app_context():
-        if not os.path.exists(db_path):
-            db.create_all()
-            print("Base de données créée dans 'instance/site.db'.")
-
-        # Création d'un admin par défaut s'il n'existe pas encore
-        if Admin.query.count() == 0:
-            default_admin = Admin(
-                username=os.environ.get('ADMIN_USERNAME', 'admin'),
-                password=generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'admin123'))
-            )
-            db.session.add(default_admin)
-            db.session.commit()
-            print(f"Admin par défaut créé : username='{os.environ.get('ADMIN_USERNAME', 'admin')}'")
-
     app.run(debug=os.environ.get('FLASK_DEBUG', 'True') == 'True')
