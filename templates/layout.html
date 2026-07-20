@@ -107,25 +107,25 @@
             <div class="col-md-5">
                 <h5 class="fw-bold text-white mb-3" data-i18n="footer.contact_social">Contacto & Redes</h5>
                 <ul class="list-unstyled mb-4">
-                    <li class="mb-2 text-white-50 small"><i class="fas fa-map-marker-alt me-2"></i><span class="translatable">Dakar, Senegal</span></li>
-                    <li class="mb-2 text-white-50 small"><i class="fas fa-envelope me-2"></i><a href="mailto:Aeeegs@gmail.com" class="text-white-50 text-decoration-none hover-underline">Aeeegs@gmail.com</a></li>
-                    <li class="mb-2 text-white-50 small"><i class="fas fa-phone-alt me-2"></i><a href="tel:+221785961479" class="text-white-50 text-decoration-none hover-underline">+ 221 78 596 14 79</a></li>
+                    <li class="mb-2 text-white-50 small"><i class="fas fa-map-marker-alt me-2"></i><span class="translatable">{{ contact_info.address }}</span></li>
+                    <li class="mb-2 text-white-50 small"><i class="fas fa-envelope me-2"></i><a href="mailto:{{ contact_info.email }}" class="text-white-50 text-decoration-none hover-underline">{{ contact_info.email }}</a></li>
+                    <li class="mb-2 text-white-50 small"><i class="fas fa-phone-alt me-2"></i><a href="tel:{{ contact_info.phone | replace(' ', '') }}" class="text-white-50 text-decoration-none hover-underline">{{ contact_info.phone }}</a></li>
                 </ul>
 
                 <h6 class="text-white mb-3" data-i18n="footer.follow_us">Síguenos:</h6>
-                <ul class="list-inline text-center text-md-start mb-0"> {# Centered for small screens, left-aligned for medium+ #}
+                <ul class="list-inline text-center text-md-start mb-0">
                     <li class="list-inline-item me-3">
-                        <a href="https://www.facebook.com/AEEEGS" target="_blank" aria-label="Facebook AEEEGS" class="social-icon-footer">
+                        <a href="{{ contact_info.facebook_url }}" target="_blank" aria-label="Facebook AEEEGS" class="social-icon-footer">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                     </li>
                     <li class="list-inline-item me-3">
-                        <a href="#" target="_blank" aria-label="WhatsApp AEEEGS" class="social-icon-footer">
+                        <a href="{{ contact_info.whatsapp_url }}" target="_blank" aria-label="WhatsApp Canal AEEEGS" class="social-icon-footer">
                             <i class="fab fa-whatsapp"></i>
                         </a>
                     </li>
                     <li class="list-inline-item">
-                        <a href="https://www.instagram.com/aeeegs_tv/?hl=fr-fr" target="_blank" aria-label="Instagram AEEEGS" class="social-icon-footer">
+                        <a href="{{ contact_info.instagram_url }}" target="_blank" aria-label="Instagram AEEEGS" class="social-icon-footer">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </li>

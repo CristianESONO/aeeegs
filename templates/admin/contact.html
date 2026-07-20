@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+
+{% block title %}Gestión de Contacto - AEEEGS Admin{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand fw-bold" href="{{ url_for('admin_dashboard') }}">
+            <span class="text-primary">ADMIN</span><span class="text-white">AEEEGS</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_articles') }}">Artículos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_categories') }}">Categorías</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_departments') }}">Carpetas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_board') }}">Directiva</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_contact') }}">Contacto</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('list_admins') }}">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-light btn-sm ms-lg-3 px-3 rounded-pill" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold m-0">Información de Contacto</h2>
+            <p class="text-muted small mt-1">Modifica las coordenadas y redes sociales que aparecen en el sitio público.</p>
+        </div>
+        <a href="{{ url_for('contact') }}" target="_blank" class="btn btn-outline-primary rounded-pill btn-sm px-3">
+            <i class="fas fa-eye me-2"></i>Ver Página Contacto
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show rounded-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row g-4">
+        <!-- Formulaire -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-lg rounded-4 p-4">
+                <h5 class="fw-bold mb-4"><i class="fas fa-address-card text-primary me-2"></i>Coordenadas</h5>
+                <form method="POST" action="{{ url_for('admin_contact') }}">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">
+                            <i class="fas fa-map-marker-alt me-2 text-primary"></i>Dirección
+                        </label>
+                        <input type="text" name="address" class="form-control rounded-3 p-3"
+                               value="{{ contact_info.address or '' }}" placeholder="Ej. Dakar, Senegal">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">
+                            <i class="fas fa-envelope me-2 text-primary"></i>Email de Contacto
+                        </label>
+                        <input type="email" name="email" class="form-control rounded-3 p-3"
+                               value="{{ contact_info.email or '' }}" placeholder="Ej. Aeeegs@gmail.com">
+                        <small class="text-muted">Los mensajes del formulario de contacto serán enviados a este email.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">
+                            <i class="fas fa-phone-alt me-2 text-primary"></i>Teléfono
+                        </label>
+                        <input type="text" name="phone" class="form-control rounded-3 p-3"
+                               value="{{ contact_info.phone or '' }}" placeholder="Ej. +221 78 596 14 79">
+                    </div>
+
+                    <hr class="my-4">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-share-alt text-primary me-2"></i>Redes Sociales</h5>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">
+                            <i class="fab fa-facebook-f me-2" style="color:#1877F2;"></i>Facebook URL
+                        </label>
+                        <input type="url" name="facebook_url" class="form-control rounded-3 p-3"
+                               value="{{ contact_info.facebook_url or '' }}" placeholder="https://www.facebook.com/AEEEGS">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">
+                            <i class="fab fa-instagram me-2" style="color:#E1306C;"></i>Instagram URL
+                        </label>
+                        <input type="url" name="instagram_url" class="form-control rounded-3 p-3"
+                               value="{{ contact_info.instagram_url or '' }}" placeholder="https://www.instagram.com/aeeegs_tv">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase text-muted">
+                            <i class="fab fa-whatsapp me-2" style="color:#25D366;"></i>WhatsApp Canal URL
+                        </label>
+                        <input type="url" name="whatsapp_url" class="form-control rounded-3 p-3"
+                               value="{{ contact_info.whatsapp_url or '' }}" placeholder="https://whatsapp.com/channel/...">
+                        <small class="text-muted">Lien vers le canal WhatsApp de l'association.</small>
+                    </div>
+
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold py-3">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Aperçu -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-light sticky-top" style="top: 90px;">
+                <h5 class="fw-bold mb-4"><i class="fas fa-eye text-muted me-2"></i>Vista Previa</h5>
+
+                <div class="d-flex align-items-center mb-3 p-3 bg-white rounded-3 border">
+                    <i class="fas fa-map-marker-alt text-primary me-3 fs-5"></i>
+                    <div>
+                        <div class="small text-muted fw-bold">Dirección</div>
+                        <div id="preview-address">{{ contact_info.address or 'Dakar, Senegal' }}</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3 p-3 bg-white rounded-3 border">
+                    <i class="fas fa-envelope text-primary me-3 fs-5"></i>
+                    <div>
+                        <div class="small text-muted fw-bold">Email</div>
+                        <div id="preview-email">{{ contact_info.email or 'Aeeegs@gmail.com' }}</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3 p-3 bg-white rounded-3 border">
+                    <i class="fas fa-phone-alt text-primary me-3 fs-5"></i>
+                    <div>
+                        <div class="small text-muted fw-bold">Teléfono</div>
+                        <div id="preview-phone">{{ contact_info.phone or '+221 78 596 14 79' }}</div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-white rounded-3 border">
+                    <div class="small text-muted fw-bold mb-2">Redes Sociales</div>
+                    <div class="d-flex gap-3">
+                        <a href="{{ contact_info.facebook_url or '#' }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-circle" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="{{ contact_info.instagram_url or '#' }}" target="_blank" class="btn btn-sm rounded-circle text-white" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#E1306C;">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="{{ contact_info.whatsapp_url or '#' }}" target="_blank" class="btn btn-sm rounded-circle text-white" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#25D366;">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live preview update
+    document.querySelector('input[name="address"]').addEventListener('input', function() {
+        document.getElementById('preview-address').textContent = this.value || 'Dakar, Senegal';
+    });
+    document.querySelector('input[name="email"]').addEventListener('input', function() {
+        document.getElementById('preview-email').textContent = this.value || 'Aeeegs@gmail.com';
+    });
+    document.querySelector('input[name="phone"]').addEventListener('input', function() {
+        document.getElementById('preview-phone').textContent = this.value || '+221 78 596 14 79';
+    });
+</script>
+{% endblock %}

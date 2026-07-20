@@ -52,30 +52,30 @@
                                 <div class="icon-box me-3 fs-4"><i class="fas fa-map-marker-alt"></i></div>
                                 <div>
                                     <h6 class="fw-bold mb-1" data-i18n="contact.address_label">Dirección</h6>
-                                    <p class="mb-0 text-white-50 translatable">Dakar, Senegal</p>
+                                    <p class="mb-0 text-white-50 translatable">{{ contact_info.address }}</p>
                                 </div>
                             </div>
                             <div class="d-flex mb-4">
                                 <div class="icon-box me-3 fs-4"><i class="fas fa-envelope"></i></div>
                                 <div>
                                     <h6 class="fw-bold mb-1" data-i18n="contact.email_info">Email</h6>
-                                    <p class="mb-0 text-white-50">Aeeegs@gmail.com</p>
+                                    <p class="mb-0 text-white-50">{{ contact_info.email }}</p>
                                 </div>
                             </div>
                             <div class="d-flex mb-5">
                                 <div class="icon-box me-3 fs-4"><i class="fas fa-phone-alt"></i></div>
                                 <div>
                                     <h6 class="fw-bold mb-1" data-i18n="contact.phone_label">Teléfono</h6>
-                                    <p class="mb-0 text-white-50">+221 78 596 14 79</p>
+                                    <p class="mb-0 text-white-50">{{ contact_info.phone }}</p>
                                 </div>
                             </div>
                             
                             <hr class="border-white opacity-25 my-5">
                             <h5 class="fw-bold mb-4" data-i18n="contact.follow">Síguenos</h5>
                             <div class="d-flex">
-                                <a href="#!" class="btn btn-light rounded-circle me-2" style="width: 45px; height: 45px;"><i class="fab fa-facebook-f text-primary"></i></a>
-                                <a href="#!" class="btn btn-light rounded-circle me-2" style="width: 45px; height: 45px;"><i class="fab fa-instagram text-primary"></i></a>
-                                <a href="#!" class="btn btn-light rounded-circle" style="width: 45px; height: 45px;"><i class="fab fa-twitter text-primary"></i></a>
+                                <a href="{{ contact_info.facebook_url }}" target="_blank" class="btn btn-light rounded-circle me-2" style="width: 45px; height: 45px; display:flex; align-items:center; justify-content:center;" aria-label="Facebook AEEEGS"><i class="fab fa-facebook-f text-primary"></i></a>
+                                <a href="{{ contact_info.instagram_url }}" target="_blank" class="btn btn-light rounded-circle me-2" style="width: 45px; height: 45px; display:flex; align-items:center; justify-content:center;" aria-label="Instagram AEEEGS"><i class="fab fa-instagram text-primary"></i></a>
+                                <a href="{{ contact_info.whatsapp_url }}" target="_blank" class="btn btn-light rounded-circle" style="width: 45px; height: 45px; display:flex; align-items:center; justify-content:center;" aria-label="WhatsApp Canal AEEEGS"><i class="fab fa-whatsapp text-success"></i></a>
                             </div>
                         </div>
                     </div>

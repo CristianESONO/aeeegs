@@ -14,7 +14,7 @@ load_dotenv()
 from extensions import db
 
 # Import des modèles (assure-toi que models.py utilise la même instance db)
-from models import Admin, Category, Article, Comment, Like, BoardTerm, BoardMember, Department
+from models import Admin, Category, Article, Comment, Like, BoardTerm, BoardMember, Department, ContactInfo
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key_for_dev_only')
@@ -74,6 +74,34 @@ is_cli = len(sys.argv) > 1 and sys.argv[1] in ['db', 'shell', 'run']
 if not is_cli:
     with app.app_context():
         run_migrations_safely()
+        # Seed contact info if not exists
+        if ContactInfo.query.count() == 0:
+            default_contact = ContactInfo(
+                address="Dakar, Senegal",
+                email="Aeeegs@gmail.com",
+                phone="+221 78 596 14 79",
+                whatsapp_url="https://whatsapp.com/channel/0029VaycmEG9mrGYpZBjll2i",
+                facebook_url="https://www.facebook.com/AEEEGS",
+                instagram_url="https://www.instagram.com/aeeegs_tv/?hl=fr-fr"
+            )
+            db.session.add(default_contact)
+            db.session.commit()
+            print("Default contact info seeded.")
+
+@app.context_processor
+def inject_contact_info():
+    """Inject contact info into all templates automatically."""
+    contact_info = ContactInfo.query.first()
+    if not contact_info:
+        contact_info = ContactInfo(
+            address="Dakar, Senegal",
+            email="Aeeegs@gmail.com",
+            phone="+221 78 596 14 79",
+            whatsapp_url="https://whatsapp.com/channel/0029VaycmEG9mrGYpZBjll2i",
+            facebook_url="https://www.facebook.com/AEEEGS",
+            instagram_url="https://www.instagram.com/aeeegs_tv/?hl=fr-fr"
+        )
+    return dict(contact_info=contact_info)
 
 # Décorateur pour routes protégées admin
 def login_required(f):
@@ -122,15 +150,17 @@ def directiva_public():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    contact_info = ContactInfo.query.first()
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         message_content = request.form['message']
+        recipient = contact_info.email if contact_info else "Aeeegs@gmail.com"
 
         msg = Message(
-            subject=f"Nouveau message de {name}",
+            subject=f"Nuevo mensaje de {name}",
             sender=app.config['MAIL_DEFAULT_SENDER'],
-            recipients=["Aeeegs@gmail.com"],  # L'adresse qui reçoit les messages
+            recipients=[recipient],
             body=f"""
 Vous avez reçu un nouveau message depuis le site AEEEGS :
 
@@ -151,7 +181,30 @@ Message :
 
         return redirect(url_for('contact'))
 
-    return render_template('contact.html')
+    return render_template('contact.html', contact_info=contact_info)
+
+
+@app.route('/admin/contact', methods=['GET', 'POST'])
+@login_required
+def admin_contact():
+    contact_info = ContactInfo.query.first()
+    if not contact_info:
+        contact_info = ContactInfo()
+        db.session.add(contact_info)
+        db.session.commit()
+
+    if request.method == 'POST':
+        contact_info.address = request.form.get('address', contact_info.address)
+        contact_info.email = request.form.get('email', contact_info.email)
+        contact_info.phone = request.form.get('phone', contact_info.phone)
+        contact_info.facebook_url = request.form.get('facebook_url', contact_info.facebook_url)
+        contact_info.instagram_url = request.form.get('instagram_url', contact_info.instagram_url)
+        contact_info.whatsapp_url = request.form.get('whatsapp_url', contact_info.whatsapp_url)
+        db.session.commit()
+        flash("Información de contacto actualizada correctamente.", "success")
+        return redirect(url_for('admin_contact'))
+
+    return render_template('admin/contact.html', contact_info=contact_info)
 
 
 @app.route('/admin/articles')

@@ -68,3 +68,12 @@ class BoardMember(db.Model):
     role = db.Column(db.String(100), nullable=False)
     image_filename = db.Column(db.String(100))
 
+class ContactInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(200), default="Dakar, Senegal")
+    email = db.Column(db.String(100), default="Aeeegs@gmail.com")
+    phone = db.Column(db.String(50), default="+221 78 596 14 79")
+    whatsapp_url = db.Column(db.String(300), default="https://whatsapp.com/channel/0029VaycmEG9mrGYpZBjll2i")
+    facebook_url = db.Column(db.String(300), default="https://www.facebook.com/AEEEGS")
+    instagram_url = db.Column(db.String(300), default="https://www.instagram.com/aeeegs_tv/?hl=fr-fr")
+
