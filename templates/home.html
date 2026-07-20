@@ -5,7 +5,7 @@
 {% block content %}
 <div class="search-container mb-5" style="max-width: 600px; margin: -100px auto 50px auto; position: relative; z-index: 20;">
     <form action="{{ url_for('search') }}" method="GET" class="glass-search p-2 rounded-pill shadow-lg d-flex" style="background: rgba(255,255,255,0.9); backdrop-filter: blur(5px);">
-        <input type="text" name="q" class="form-control border-0 bg-transparent px-4" placeholder="Buscar artículos..." style="box-shadow: none;">
+        <input type="text" name="q" class="form-control border-0 bg-transparent px-4" placeholder="Buscar artículos..." data-i18n-placeholder="home.search_placeholder" style="box-shadow: none;">
         <button class="btn btn-primary rounded-pill px-4" type="submit">
             <i class="fas fa-search"></i>
         </button>
@@ -23,11 +23,11 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                <span class="category-badge">{{ article.category.name if article.category else 'Nacionales' }}</span>
+                <span class="category-badge translatable">{{ article.category.name if article.category else 'Nacionales' }}</span>
                 <h3 class="card-title">
-                    <a href="{{ url_for('post', post_id=article.id) }}" class="text-decoration-none text-dark">{{ article.title }}</a>
+                    <a href="{{ url_for('post', post_id=article.id) }}" class="text-decoration-none text-dark translatable">{{ article.title }}</a>
                 </h3>
-                <p class="card-text text-muted">
+                <p class="card-text text-muted translatable">
                     {{ article.content[:150] | striptags }}...
                 </p>
             </div>
@@ -41,7 +41,7 @@
         </div>
     {% else %}
         <div class="col-12 text-center py-5">
-            <p class="lead text-muted">No hay artículos disponibles actualmente.</p>
+            <p class="lead text-muted" data-i18n="home.no_articles">No hay artículos disponibles actualmente.</p>
         </div>
     {% endfor %}
 </div>
@@ -52,7 +52,7 @@
     <ul class="pagination">
         {% if articles.has_prev %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('home', page=articles.prev_num) }}">&larr; Anterior</a>
+            <a class="page-link" href="{{ url_for('home', page=articles.prev_num) }}" data-i18n="home.prev">&larr; Anterior</a>
         </li>
         {% endif %}
         
@@ -70,7 +70,7 @@
 
         {% if articles.has_next %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('home', page=articles.next_num) }}">Siguiente &rarr;</a>
+            <a class="page-link" href="{{ url_for('home', page=articles.next_num) }}" data-i18n="home.next">Siguiente &rarr;</a>
         </li>
         {% endif %}
     </ul>

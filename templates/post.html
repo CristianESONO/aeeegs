@@ -8,13 +8,13 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="post-heading">
-                    <h1>{{ article.title }}</h1>
+                    <h1 class="translatable">{{ article.title }}</h1>
                     {% if article.subtitle %}
-                    <h2 class="subheading">{{ article.subtitle }}</h2>
+                    <h2 class="subheading translatable">{{ article.subtitle }}</h2>
                     {% endif %}
                     <span class="meta">
-                        Posteado por <a href="#!" class="text-white fw-bold">{{ article.author.username }}</a>
-                        el {{ article.date_posted.strftime('%d %B %Y') }}
+                        <span data-i18n="post.posted_by">Posteado por</span> <a href="#!" class="text-white fw-bold">{{ article.author.username }}</a>
+                        <span data-i18n="post.on">el</span> {{ article.date_posted.strftime('%d %B %Y') }}
                     </span>
                 </div>
             </div>
@@ -30,7 +30,7 @@
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="article-content fs-5 lh-lg text-dark">
                     {% for paragraph in article.content.split('\n\n') %}
-                        <p class="mb-4">{{ paragraph | safe }}</p>
+                        <p class="mb-4 translatable">{{ paragraph | safe }}</p>
                     {% endfor %}
                 </div>
 
@@ -42,11 +42,11 @@
                             </button>
                         </form>
                         <div class="text-muted">
-                            <i class="far fa-comment me-2"></i> {{ article.comments|length }} Comentarios
+                            <i class="far fa-comment me-2"></i> {{ article.comments|length }} <span data-i18n="post.comments_count">Comentarios</span>
                         </div>
                     </div>
                     <div class="share-buttons">
-                        <span class="text-muted me-2 small">Compartir:</span>
+                        <span class="text-muted me-2 small" data-i18n="post.share">Compartir:</span>
                         <a href="#!" class="text-muted me-2"><i class="fab fa-facebook-f"></i></a>
                         <a href="#!" class="text-muted me-2"><i class="fab fa-twitter"></i></a>
                         <a href="#!" class="text-muted"><i class="fab fa-whatsapp"></i></a>
@@ -55,32 +55,32 @@
 
                 {# Section des commentaires #}
                 <section class="comments-section">
-                    <h3 class="mb-4">Comentarios</h3>
+                    <h3 class="mb-4" data-i18n="post.comments_title">Comentarios</h3>
                     
                     {% for comment in article.comments if comment.parent_id is none %}
                         <div class="comment-card p-4 rounded-4 shadow-sm mb-4 border" style="background: white;">
                             <div class="d-flex justify-content-between mb-2">
-                                <strong class="text-primary">{{ comment.username }}</strong>
+                                <strong class="text-primary translatable">{{ comment.username }}</strong>
                                 <small class="text-muted">{{ comment.date_posted.strftime('%d/%m/%Y %H:%M') }}</small>
                             </div>
-                            <p class="text-dark">{{ comment.content }}</p>
+                            <p class="text-dark translatable">{{ comment.content }}</p>
                             <div class="d-flex align-items-center">
                                 <form action="{{ url_for('like_comment', comment_id=comment.id) }}" method="post" class="like-comment-form me-3">
                                     <button type="submit" class="btn btn-sm btn-link text-decoration-none p-0 text-muted">
                                         <i class="fas fa-heart text-danger me-1"></i> {{ comment.likes or 0 }}
                                     </button>
                                 </form>
-                                <button class="btn btn-sm btn-link text-decoration-none p-0 text-primary" onclick="showReplyForm({{ comment.id }})">Responder</button>
+                                <button class="btn btn-sm btn-link text-decoration-none p-0 text-primary" onclick="showReplyForm({{ comment.id }})" data-i18n="post.reply_btn">Responder</button>
                             </div>
                             
                             {# Réponses #}
                             {% for reply in comment.replies %}
                                 <div class="reply-card p-3 rounded-3 mt-3 border-start border-4 border-primary bg-light">
                                     <div class="d-flex justify-content-between mb-1">
-                                        <strong class="text-dark">{{ reply.username }}</strong>
+                                        <strong class="text-dark translatable">{{ reply.username }}</strong>
                                         <small class="text-muted">{{ reply.date_posted.strftime('%d/%m/%Y %H:%M') }}</small>
                                     </div>
-                                    <p class="mb-0">{{ reply.content }}</p>
+                                    <p class="mb-0 translatable">{{ reply.content }}</p>
                                 </div>
                             {% endfor %}
 
@@ -89,31 +89,31 @@
                                     <input type="hidden" name="post_id" value="{{ article.id }}">
                                     <input type="hidden" name="parent_id" value="{{ comment.id }}">
                                     <div class="mb-2">
-                                        <input type="text" name="username" placeholder="Tu nombre" required class="form-control form-control-sm rounded-pill px-3">
+                                        <input type="text" name="username" placeholder="Tu nombre" data-i18n-placeholder="post.your_name_placeholder" required class="form-control form-control-sm rounded-pill px-3">
                                     </div>
                                     <div class="mb-2">
-                                        <textarea name="content" placeholder="Tu respuesta..." required class="form-control form-control-sm rounded-3" rows="2"></textarea>
+                                        <textarea name="content" placeholder="Tu respuesta..." data-i18n-placeholder="post.your_reply_placeholder" required class="form-control form-control-sm rounded-3" rows="2"></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">Responder</button>
-                                    <button type="button" class="btn btn-link btn-sm text-muted" onclick="hideReplyForm({{ comment.id }})">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3" data-i18n="post.reply_btn">Responder</button>
+                                    <button type="button" class="btn btn-link btn-sm text-muted" onclick="hideReplyForm({{ comment.id }})" data-i18n="post.cancel_btn">Cancelar</button>
                                 </form>
                             </div>
                         </div>
                     {% else %}
-                        <p class="text-muted fst-italic">Aún no hay comentarios. ¡Sé el primero!</p>
+                        <p class="text-muted fst-italic" data-i18n="post.no_comments">Aún no hay comentarios. ¡Sé el primero!</p>
                     {% endfor %}
 
                     <div class="add-comment-box mt-5 p-4 rounded-4 shadow-sm" style="background: #f8f9fa;">
-                        <h4 class="mb-4">Deja un comentario</h4>
+                        <h4 class="mb-4" data-i18n="post.leave_comment">Deja un comentario</h4>
                         <form action="{{ url_for('add_comment') }}" method="post">
                             <input type="hidden" name="post_id" value="{{ article.id }}">
                             <div class="mb-3">
-                                <input type="text" name="username" placeholder="Tu nombre" required class="form-control rounded-pill px-4">
+                                <input type="text" name="username" placeholder="Tu nombre" data-i18n-placeholder="post.your_name_placeholder" required class="form-control rounded-pill px-4">
                             </div>
                             <div class="mb-3">
-                                <textarea name="content" id="comment-textarea" placeholder="¿Qué opinas?" required class="form-control rounded-4 p-4" rows="4"></textarea>
+                                <textarea name="content" id="comment-textarea" placeholder="¿Qué opinas?" data-i18n-placeholder="post.your_opinion_placeholder" required class="form-control rounded-4 p-4" rows="4"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-5">Publicar Comentario</button>
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-5" data-i18n="post.publish_btn">Publicar Comentario</button>
                         </form>
                     </div>
                 </section>

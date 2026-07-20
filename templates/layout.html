@@ -29,14 +29,24 @@
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
-                Menú <i class="fas fa-bars"></i>
+                <span data-i18n="nav.menu">Menú</span> <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('home') }}">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('about') }}">Acerca de</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('directiva_public') }}">Directiva</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('contact') }}">Contacto</a></li>
+                <ul class="navbar-nav ms-auto py-4 py-lg-0 align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('home') }}" data-i18n="nav.home">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('about') }}" data-i18n="nav.about">Acerca de</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('directiva_public') }}" data-i18n="nav.board">Directiva</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('contact') }}" data-i18n="nav.contact">Contacto</a></li>
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="nav-link py-3 py-lg-4 dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+                            <span id="current-lang-flag" class="me-2">🌐</span><span id="current-lang-label">ES</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3" aria-labelledby="navbarDropdownLanguage">
+                            <li><a class="dropdown-item lang-option d-flex align-items-center justify-content-between active" href="#" data-lang="es"><span>🇪🇸 Español</span> <i class="fas fa-check text-primary lang-check small ms-2"></i></a></li>
+                            <li><a class="dropdown-item lang-option d-flex align-items-center justify-content-between" href="#" data-lang="fr"><span>🇫🇷 Français</span> <i class="fas fa-check text-primary lang-check small d-none ms-2"></i></a></li>
+                            <li><a class="dropdown-item lang-option d-flex align-items-center justify-content-between" href="#" data-lang="en"><span>🇬🇧 English</span> <i class="fas fa-check text-primary lang-check small d-none ms-2"></i></a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -48,8 +58,8 @@
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-7">
                     <div class="site-heading">
-                        <h1>Bienvenidos a AEEEGS</h1>
-                        <span class="subheading">La asociación de estudiantes y alumnos ecuatoguineanos en Senegal</span>
+                        <h1 data-i18n="header.title">Bienvenidos a AEEEGS</h1>
+                        <span class="subheading" data-i18n="header.subtitle">La asociación de estudiantes y alumnos ecuatoguineanos en Senegal</span>
                     </div>
                 </div>
             </div>
@@ -72,38 +82,37 @@
     <footer class="py-5 bg-dark text-white-50"> {# Dark background, generous padding, and muted text #}
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center text-center text-md-start"> {# Centered for small screens, left-aligned for medium+ #}
-
             {# Column 1: Brand & Description #}
             <div class="col-md-4 mb-4 mb-md-0">
                 <h5 class="fw-bold text-white mb-3">AEEEGS</h5>
-                <p class="small mb-2">
+                <p class="small mb-2" data-i18n="footer.description">
                     Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal.
                     Promovemos la unidad, el apoyo mutuo y el desarrollo.
                 </p>
-                <a href="{{ url_for('about') }}" class="text-white-50 text-decoration-none small hover-underline">Conoce más sobre nosotros <i class="fas fa-arrow-right ms-1"></i></a>
+                <a href="{{ url_for('about') }}" class="text-white-50 text-decoration-none small hover-underline"><span data-i18n="footer.know_more">Conoce más sobre nosotros</span> <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
 
             {# Column 2: Quick Links #}
             <div class="col-md-3 mb-4 mb-md-0">
-                <h5 class="fw-bold text-white mb-3">Enlaces Rápidos</h5>
+                <h5 class="fw-bold text-white mb-3" data-i18n="footer.quick_links">Enlaces Rápidos</h5>
                 <ul class="list-unstyled mb-0">
-                    <li class="mb-2"><a href="{{ url_for('home') }}" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-home me-2"></i>Inicio</a></li>
-                    <li class="mb-2"><a href="{{ url_for('about') }}" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-info-circle me-2"></i>Sobre Nosotros</a></li>
-                    <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-envelope me-2"></i>Contacto</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-scroll me-2"></i>Blog</a></li> {# Assuming you have a blog/articles page #}
+                    <li class="mb-2"><a href="{{ url_for('home') }}" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-home me-2"></i><span data-i18n="nav.home">Inicio</span></a></li>
+                    <li class="mb-2"><a href="{{ url_for('about') }}" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-info-circle me-2"></i><span data-i18n="nav.about_footer">Sobre Nosotros</span></a></li>
+                    <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-envelope me-2"></i><span data-i18n="nav.contact">Contacto</span></a></li>
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small hover-underline"><i class="fas fa-scroll me-2"></i><span data-i18n="nav.blog_footer">Blog</span></a></li>
                 </ul>
             </div>
 
             {# Column 3: Contact Info & Social Media #}
             <div class="col-md-5">
-                <h5 class="fw-bold text-white mb-3">Contacto & Redes</h5>
+                <h5 class="fw-bold text-white mb-3" data-i18n="footer.contact_social">Contacto & Redes</h5>
                 <ul class="list-unstyled mb-4">
-                    <li class="mb-2 text-white-50 small"><i class="fas fa-map-marker-alt me-2"></i>Dakar, Senegal</li>
+                    <li class="mb-2 text-white-50 small"><i class="fas fa-map-marker-alt me-2"></i><span class="translatable">Dakar, Senegal</span></li>
                     <li class="mb-2 text-white-50 small"><i class="fas fa-envelope me-2"></i><a href="mailto:Aeeegs@gmail.com" class="text-white-50 text-decoration-none hover-underline">Aeeegs@gmail.com</a></li>
                     <li class="mb-2 text-white-50 small"><i class="fas fa-phone-alt me-2"></i><a href="tel:+221785961479" class="text-white-50 text-decoration-none hover-underline">+ 221 78 596 14 79</a></li>
                 </ul>
 
-                <h6 class="text-white mb-3">Síguenos:</h6>
+                <h6 class="text-white mb-3" data-i18n="footer.follow_us">Síguenos:</h6>
                 <ul class="list-inline text-center text-md-start mb-0"> {# Centered for small screens, left-aligned for medium+ #}
                     <li class="list-inline-item me-3">
                         <a href="https://www.facebook.com/AEEEGS" target="_blank" aria-label="Facebook AEEEGS" class="social-icon-footer">
@@ -120,7 +129,6 @@
                             <i class="fab fa-instagram"></i>
                         </a>
                     </li>
-                    {# Add more social media links as needed #}
                 </ul>
             </div>
 
@@ -131,12 +139,12 @@
         {# Copyright and attribution #}
         <div class="row gx-4 gx-lg-5 justify-content-between align-items-center">
             <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                <div class="small text-white-50">© 2025 AEEEGS. Todos los derechos reservados.</div>
+                <div class="small text-white-50" data-i18n="footer.rights">© 2025 AEEEGS. Todos los derechos reservados.</div>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <div class="small text-white-50">Diseñado y Desarrollado por <span class="text-white fw-bold">Ruslan Cristian ESONO MAYE</span></div>
+                <div class="small text-white-50"><span data-i18n="footer.designed_by">Diseñado y Desarrollado por</span> <span class="text-white fw-bold">Ruslan Cristian ESONO MAYE</span></div>
             </div>
-        </div>
+        </div>   </div>
 
     </div>
 </footer>
@@ -207,6 +215,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 
     <script>
         // Get the button

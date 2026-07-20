@@ -7,7 +7,7 @@
     <div class="container py-4">
         {# Enhanced search results heading #}
         <h1 class="display-4 fw-bolder text-center mb-5 text-primary">
-            <i class="fas fa-search me-3 text-secondary"></i> Resultados de búsqueda para: "<span class="text-info">{{ query }}</span>"
+            <i class="fas fa-search me-3 text-secondary"></i> <span data-i18n="search.results_for">Resultados de búsqueda para:</span> "<span class="text-info translatable">{{ query }}</span>"
         </h1>
 
         {% if articles %}
@@ -25,16 +25,16 @@
                             <div class="card-body d-flex flex-column p-4"> {# Increased padding in card body #}
                                 <small class="text-muted mb-2 d-flex align-items-center">
                                     <i class="far fa-calendar-alt me-2"></i> {{ article.date_posted.strftime('%d %B %Y') }}
-                                    <span class="ms-auto text-primary fw-medium">{{ article.category.name if article.category else 'Sin categoría' }}</span> {# Display category name #}
+                                    <span class="ms-auto text-primary fw-medium translatable">{{ article.category.name if article.category else 'Sin categoría' }}</span> {# Display category name #}
                                 </small>
-                                <h5 class="card-title fw-bold fs-4 text-dark mb-3">{{ article.title }}</h5> {# Larger, bolder title #}
-                                <p class="card-text text-muted flex-grow-1 mb-4">{{ article.content[:180] }}...</p> {# Slightly longer excerpt, more bottom margin #}
+                                <h5 class="card-title fw-bold fs-4 text-dark mb-3 translatable">{{ article.title }}</h5> {# Larger, bolder title #}
+                                <p class="card-text text-muted flex-grow-1 mb-4 translatable">{{ article.content[:180] }}...</p> {# Slightly longer excerpt, more bottom margin #}
                                 <a href="{{ url_for('post', post_id=article.id) }}" class="btn btn-primary rounded-pill mt-auto align-self-start px-4 py-2 fw-medium">
-                                    Leer más <i class="fas fa-arrow-right ms-2"></i>
+                                    <span data-i18n="search.read_more">Leer más</span> <i class="fas fa-arrow-right ms-2"></i>
                                 </a>
                             </div>
                             <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 text-muted text-end">
-                                <small>Publicado por <span class="fw-bold">{{ article.author.username if article.author else 'Anónimo' }}</span></small>
+                                <small><span data-i18n="search.published_by">Publicado por</span> <span class="fw-bold translatable">{{ article.author.username if article.author else 'Anónimo' }}</span></small>
                             </div>
                         </div>
                     </div>
@@ -44,20 +44,20 @@
             {# Enhanced no results message #}
             <div class="alert alert-info text-center py-5 rounded-4 shadow-lg animate__animated animate__fadeInUp"> {# Added animation classes #}
                 <i class="fas fa-exclamation-circle fa-4x text-info mb-4"></i> {# Larger icon #}
-                <h2 class="alert-heading display-6 fw-bold text-dark mb-3">¡Lo Sentimos!</h2>
+                <h2 class="alert-heading display-6 fw-bold text-dark mb-3" data-i18n="search.sorry">¡Lo Sentimos!</h2>
                 <p class="fs-5 mb-4 text-muted">
-                    No se encontraron artículos que coincidan con tu búsqueda: "<strong class="text-primary">{{ query }}</strong>".
+                    <span data-i18n="search.no_results_prefix">No se encontraron artículos que coincidan con tu búsqueda:</span> "<strong class="text-primary translatable">{{ query }}</strong>".
                 </p>
                 <hr class="my-4 border-info opacity-25">
-                <p class="mb-0 fs-6 text-muted">
-                    Por favor, intenta con palabras clave diferentes o explora nuestras categorías.
+                <p class="mb-0 fs-6 text-muted" data-i18n="search.try_again">
+                    Por favor, intenta con palabras clave diferentes o explora nuestras catégories.
                 </p>
                 <div class="mt-4">
-                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary btn-lg rounded-pill px-4 me-3">
-                        <i class="fas fa-home me-2"></i> Ir al Inicio
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-primary btn-lg rounded-pill px-4 me-3">
+                        <i class="fas fa-home me-2"></i> <span data-i18n="search.go_home">Ir al Inicio</span>
                     </a>
                     <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg rounded-pill px-4">
-                        <i class="fas fa-question-circle me-2"></i> Contactar
+                        <i class="fas fa-question-circle me-2"></i> <span data-i18n="search.contact_us">Contactar</span>
                     </a>
                 </div>
             </div>

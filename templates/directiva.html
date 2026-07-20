@@ -8,8 +8,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>Nuestra Directiva</h1>
-                    <span class="subheading">Liderazgo y compromiso en cada mandato</span>
+                    <h1 data-i18n="directiva.header.title">Nuestra Directiva</h1>
+                    <span class="subheading" data-i18n="directiva.header.subtitle">Liderazgo y compromiso en cada mandato</span>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="row justify-content-center mb-5">
             <div class="col-lg-6">
                 <div class="glass-card p-4 rounded-4 shadow-sm bg-white text-center">
-                    <h5 class="fw-bold mb-3 text-uppercase small text-muted">Explorar por año académico</h5>
+                    <h5 class="fw-bold mb-3 text-uppercase small text-muted" data-i18n="directiva.explore">Explorar por año académico</h5>
                     <form action="{{ url_for('directiva_public') }}" method="get" class="d-flex gap-2">
                         <select name="term" class="form-select rounded-pill p-3 border-0 bg-light shadow-sm" onchange="this.form.submit()">
                             {% for term in terms %}
@@ -33,7 +33,7 @@
                             </option>
                             {% endfor %}
                         </select>
-                        <noscript><button type="submit" class="btn btn-primary rounded-pill px-4">Ver</button></noscript>
+                        <noscript><button type="submit" class="btn btn-primary rounded-pill px-4" data-i18n="directiva.see_btn">Ver</button></noscript>
                     </form>
                 </div>
             </div>
@@ -55,18 +55,18 @@
                                 </div>
                                 {% endif %}
                                 <div class="position-absolute top-0 start-0 m-3">
-                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow">PRESIDENTE</span>
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow" data-i18n="directiva.president_badge">PRESIDENTE</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-7 ps-md-5">
                             <h6 class="text-primary fw-bold text-uppercase small mb-2">{{ selected_term.start_year }} - {{ selected_term.end_year }}</h6>
-                            <h2 class="display-5 fw-bold mb-3">{{ selected_term.president_name }}</h2>
+                            <h2 class="display-5 fw-bold mb-3 translatable">{{ selected_term.president_name }}</h2>
                             <p class="lead text-muted fst-italic mb-4">
-                                "{{ selected_term.president_bio or 'Dedicados al progreso y bienestar de la comunidad estudiantil.' }}"
+                                "<span class="translatable">{{ selected_term.president_bio or 'Dedicados al progreso y bienestar de la comunidad estudiantil.' }}</span>"
                             </p>
                             
-                            <h5 class="fw-bold mb-3 small text-uppercase">Cúpula Ejecutiva</h5>
+                            <h5 class="fw-bold mb-3 small text-uppercase" data-i18n="directiva.executive">Cúpula Ejecutiva</h5>
                             <div class="row g-2">
                                 {% for member in selected_term.members if not member.department_id %}
                                 <div class="col-sm-6">
@@ -79,8 +79,8 @@
                                         </div>
                                         {% endif %}
                                         <div class="overflow-hidden">
-                                            <div class="fw-bold text-dark text-truncate" style="font-size: 0.8rem;">{{ member.name }}</div>
-                                            <div class="text-primary extra-small" style="font-size: 0.7rem;">{{ member.role }}</div>
+                                            <div class="fw-bold text-dark text-truncate translatable" style="font-size: 0.8rem;">{{ member.name }}</div>
+                                            <div class="text-primary extra-small translatable" style="font-size: 0.7rem;">{{ member.role }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -96,8 +96,8 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="text-center mb-5 mt-5">
-                    <h3 class="fw-bold">Carpetas de Trabajo</h3>
-                    <p class="text-muted">Equipos especializados por área de impacto</p>
+                    <h3 class="fw-bold" data-i18n="directiva.work_folders">Carpetas de Trabajo</h3>
+                    <p class="text-muted" data-i18n="directiva.work_subtitle">Equipos especializados por área de impacto</p>
                 </div>
                 
                 <div class="row g-4">
@@ -106,8 +106,8 @@
                     {% if dept_members %}
                     <div class="col-md-6 col-lg-4">
                         <div class="glass-card p-4 rounded-4 shadow-sm h-100 bg-white border-top border-primary border-4">
-                            <h4 class="fw-bold text-primary mb-1">{{ dept.name }}</h4>
-                            <p class="text-muted extra-small mb-3">{{ dept.description }}</p>
+                            <h4 class="fw-bold text-primary mb-1 translatable">{{ dept.name }}</h4>
+                            <p class="text-muted extra-small mb-3 translatable">{{ dept.description }}</p>
                             
                             <div class="dept-members-list">
                                 {% for member in dept_members|sort(attribute='role') %}
@@ -120,8 +120,8 @@
                                     </div>
                                     {% endif %}
                                     <div class="overflow-hidden">
-                                        <div class="fw-bold text-dark text-truncate" style="font-size: 0.75rem;">{{ member.name }}</div>
-                                        <div class="text-primary extra-small" style="font-size: 0.65rem;">{{ member.role }}</div>
+                                        <div class="fw-bold text-dark text-truncate translatable" style="font-size: 0.75rem;">{{ member.name }}</div>
+                                        <div class="text-primary extra-small translatable" style="font-size: 0.65rem;">{{ member.role }}</div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -136,7 +136,7 @@
         {% else %}
         <div class="text-center py-5">
             <i class="fas fa-search display-1 text-muted mb-4"></i>
-            <h2 class="text-muted">No se encontró información para este periodo.</h2>
+            <h2 class="text-muted" data-i18n="directiva.not_found">No se encontró información para este periodo.</h2>
         </div>
         {% endif %}
     </div>

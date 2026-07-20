@@ -8,8 +8,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>Nuestra Historia</h1>
-                    <span class="subheading">Unidos por la educación y la fraternidad</span>
+                    <h1 data-i18n="about.header.title">Nuestra Historia</h1>
+                    <span class="subheading" data-i18n="about.header.subtitle">Unidos por la educación y la fraternidad</span>
                 </div>
             </div>
         </div>
@@ -24,12 +24,12 @@
             <div class="col-lg-10">
                 <!-- Association Intro -->
                 <div class="glass-card p-5 rounded-4 shadow-lg mb-5" style="background: white; border: 1px solid rgba(0,0,0,0.05);">
-                    <h2 class="display-5 fw-bold text-primary mb-4">¿Quiénes somos?</h2>
-                    <p class="lead fs-4 text-dark mb-4">
-                        La <strong class="text-primary">Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal (AEEEGS)</strong> es una comunidad vibrante dedicada al apoyo mutuo.
+                    <h2 class="display-5 fw-bold text-primary mb-4" data-i18n="about.who_we_are">¿Quiénes somos?</h2>
+                    <p class="lead fs-4 text-dark mb-4 translatable">
+                        La Asociación de Estudiantes y Alumnos Ecuatoguineanos en Senegal (AEEEGS) es una comunidad vibrante dedicada al apoyo mutuo.
                     </p>
                     <div class="content-text fs-5 lh-lg text-muted">
-                        <p>Promovemos la unidad y el desarrollo académico de nuestros miembros, representándolos dignamente ante las instituciones. Nuestro compromiso va más allá de lo académico; fomentamos la identidad cultural y la solidaridad entre todos los ecuatoguineanos en Senegal.</p>
+                        <p class="translatable">Promovemos la unidad y el desarrollo académico de nuestros miembros, representándolos dignamente ante las institutions. Nuestro compromiso va más allá de lo académico; fomentamos la identidad cultural y la solidaridad entre todos los ecuatoguineanos en Senegal.</p>
                     </div>
                 </div>
 
@@ -45,15 +45,15 @@
                                     <img src="{{ url_for('static', filename='assets/img/presi.jpg') }}" alt="Presidente AEEEGS" class="img-fluid rounded-4" style="width: 320px; height: 380px; object-fit: cover;">
                                 {% endif %}
                                 <div class="position-absolute bottom-0 start-50 translate-middle-x mb-[-20px]">
-                                    <span class="badge bg-primary px-4 py-2 rounded-pill shadow-lg border border-3 border-white">PRESIDENTE</span>
+                                    <span class="badge bg-primary px-4 py-2 rounded-pill shadow-lg border border-3 border-white" data-i18n="about.president_badge">PRESIDENTE</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 ps-md-5">
-                            <h6 class="text-primary fw-bold text-uppercase small mb-2">Mandato Actual ({{ current_term.start_year }}-{{ current_term.end_year }})</h6>
-                            <h2 class="display-6 fw-bold text-dark mb-1">{{ current_term.president_name }}</h2>
+                            <h6 class="text-primary fw-bold text-uppercase small mb-2"><span data-i18n="about.current_mandate">Mandato Actual</span> ({{ current_term.start_year }}-{{ current_term.end_year }})</h6>
+                            <h2 class="display-6 fw-bold text-dark mb-1 translatable">{{ current_term.president_name }}</h2>
                             <p class="fs-5 text-muted lh-base italic mt-3 mb-4">
-                                "{{ current_term.president_bio or 'Trabajando juntos por una comunidad estudiantil más fuerte y unida.' }}"
+                                "<span class="translatable">{{ current_term.president_bio or 'Trabajando juntos por una comunidad estudiantil más fuerte y unida.' }}</span>"
                             </p>
                             
                             <!-- Executive Team (Those not in carpetas - e.g. VP, Secretary General) -->
@@ -69,8 +69,8 @@
                                             </div>
                                         {% endif %}
                                         <div>
-                                            <div class="fw-bold text-dark small">{{ member.role }}</div>
-                                            <div class="text-muted" style="font-size: 0.9rem;">{{ member.name }}</div>
+                                            <div class="fw-bold text-dark small translatable">{{ member.role }}</div>
+                                            <div class="text-muted translatable" style="font-size: 0.9rem;">{{ member.name }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -84,8 +84,8 @@
                 {% if departments %}
                 <div class="carpetas-section mt-5 py-5 border-top">
                     <div class="text-center mb-5">
-                        <h2 class="fw-bold">Nuestras Carpetas</h2>
-                        <p class="text-muted">El equipo de trabajo que hace posible cada actividad de la AEEEGS</p>
+                        <h2 class="fw-bold" data-i18n="about.our_boards">Nuestras Carpetas</h2>
+                        <p class="text-muted" data-i18n="about.boards_subtitle">El equipo de trabajo que hace posible cada actividad de la AEEEGS</p>
                     </div>
                     
                     <div class="row g-4">
@@ -94,8 +94,8 @@
                         {% if dept_members %}
                         <div class="col-lg-4 col-md-6">
                             <div class="glass-card p-4 rounded-4 shadow-sm border h-100 bg-white">
-                                <h4 class="fw-bold text-primary mb-1">{{ dept.name }}</h4>
-                                <p class="text-muted extra-small mb-3">{{ dept.description }}</p>
+                                <h4 class="fw-bold text-primary mb-1 translatable">{{ dept.name }}</h4>
+                                <p class="text-muted extra-small mb-3 translatable">{{ dept.description }}</p>
                                 
                                 <div class="dept-members-list">
                                     {% for member in dept_members|sort(attribute='role') %}
@@ -108,8 +108,8 @@
                                             </div>
                                         {% endif %}
                                         <div class="overflow-hidden">
-                                            <div class="fw-bold text-dark text-truncate" style="font-size: 0.75rem;">{{ member.name }}</div>
-                                            <div class="text-primary extra-small" style="font-size: 0.65rem;">{{ member.role }}</div>
+                                            <div class="fw-bold text-dark text-truncate translatable" style="font-size: 0.75rem;">{{ member.name }}</div>
+                                            <div class="text-primary extra-small translatable" style="font-size: 0.65rem;">{{ member.role }}</div>
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -125,7 +125,7 @@
 
                 <!-- Board History Section -->
                 <div class="history-section mt-5 py-5 border-top">
-                    <h2 class="fw-bold mb-5 text-center"><i class="fas fa-history text-secondary me-2"></i> Historial de Presidentes</h2>
+                    <h2 class="fw-bold mb-5 text-center"><i class="fas fa-history text-secondary me-2"></i> <span data-i18n="about.president_history">Historial de Presidentes</span></h2>
                     <div class="row g-4">
                         {% for term in history %}
                             {% if not term.is_current %}
@@ -140,15 +140,15 @@
                                             </div>
                                         {% endif %}
                                         <div>
-                                            <h5 class="fw-bold m-0">{{ term.president_name }}</h5>
+                                            <h5 class="fw-bold m-0 translatable">{{ term.president_name }}</h5>
                                             <span class="text-primary small fw-bold">{{ term.start_year }} - {{ term.end_year }}</span>
                                         </div>
                                     </div>
                                     {% if term.members %}
                                     <div class="mt-3 text-muted small">
-                                        <strong>Cúpula:</strong> 
+                                        <strong data-i18n="about.cupula">Cúpula:</strong> 
                                         {% for member in term.members if not member.department_id %}
-                                            {{ member.name }}{% if not loop.last %}, {% endif %}
+                                            <span class="translatable">{{ member.name }}</span>{% if not loop.last %}, {% endif %}
                                         {% endfor %}
                                     </div>
                                     {% endif %}
@@ -156,7 +156,7 @@
                             </div>
                             {% endif %}
                         {% else %}
-                            <p class="text-center text-muted col-12">No hay registros históricos disponibles.</p>
+                            <p class="text-center text-muted col-12" data-i18n="about.no_history">No hay registros históricos disponibles.</p>
                         {% endfor %}
                     </div>
                 </div>

@@ -8,8 +8,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>{{ category.name }}</h1>
-                    <span class="subheading">Explora artículos en esta categoría</span>
+                    <h1 class="translatable">{{ category.name }}</h1>
+                    <span class="subheading translatable">Explora artículos en esta categoría</span>
                 </div>
             </div>
         </div>
@@ -29,11 +29,11 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                <span class="category-badge">{{ category.name }}</span>
+                <span class="category-badge translatable">{{ category.name }}</span>
                 <h3 class="card-title">
-                    <a href="{{ url_for('post', post_id=article.id) }}" class="text-decoration-none text-dark">{{ article.title }}</a>
+                    <a href="{{ url_for('post', post_id=article.id) }}" class="text-decoration-none text-dark translatable">{{ article.title }}</a>
                 </h3>
-                <p class="card-text text-muted">
+                <p class="card-text text-muted translatable">
                     {{ article.content[:150] | striptags }}...
                 </p>
             </div>
@@ -47,8 +47,8 @@
         </div>
     {% else %}
         <div class="col-12 text-center py-5">
-            <p class="lead text-muted">No hay artículos en esta categoría.</p>
-            <a href="{{ url_for('home') }}" class="btn btn-primary rounded-pill px-4">Volver al inicio</a>
+            <p class="lead text-muted" data-i18n="category.no_articles">No hay artículos en esta categoría.</p>
+            <a href="{{ url_for('home') }}" class="btn btn-primary rounded-pill px-4" data-i18n="search.go_home">Volver al inicio</a>
         </div>
     {% endfor %}
 </div>
@@ -59,7 +59,7 @@
     <ul class="pagination mt-5">
         {% if articles.has_prev %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('posts_by_category', category_id=category.id, page=articles.prev_num) }}">&larr; Anterior</a>
+            <a class="page-link" href="{{ url_for('posts_by_category', category_id=category.id, page=articles.prev_num) }}" data-i18n="home.prev">&larr; Anterior</a>
         </li>
         {% endif %}
         
@@ -77,7 +77,7 @@
 
         {% if articles.has_next %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('posts_by_category', category_id=category.id, page=articles.next_num) }}">Siguiente &rarr;</a>
+            <a class="page-link" href="{{ url_for('posts_by_category', category_id=category.id, page=articles.next_num) }}" data-i18n="home.next">Siguiente &rarr;</a>
         </li>
         {% endif %}
     </ul>

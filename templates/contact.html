@@ -8,8 +8,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>Contáctanos</h1>
-                    <span class="subheading">Siempre estamos aquí para escucharte</span>
+                    <h1 data-i18n="contact.header.title">Contáctanos</h1>
+                    <span class="subheading" data-i18n="contact.header.subtitle">Siempre estamos aquí para escucharte</span>
                 </div>
             </div>
         </div>
@@ -25,53 +25,53 @@
                 <div class="row">
                     <div class="col-md-7 mb-5">
                         <div class="contact-form-card p-5 rounded-4 shadow-lg h-100" style="background: white;">
-                            <h2 class="fw-bold mb-4">Envíanos un Mensaje</h2>
+                            <h2 class="fw-bold mb-4" data-i18n="contact.form_title">Envíanos un Mensaje</h2>
                             <form method="POST" action="{{ url_for('contact') }}">
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold small text-uppercase">Nombre Completo</label>
-                                    <input type="text" name="name" class="form-control rounded-3 p-3 bg-light border-0" placeholder="Ej. Juan Nze" required>
+                                    <label class="form-label fw-bold small text-uppercase" data-i18n="contact.name_label">Nombre Completo</label>
+                                    <input type="text" name="name" class="form-control rounded-3 p-3 bg-light border-0" placeholder="Ej. Juan Nze" data-i18n-placeholder="contact.name_placeholder" required>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold small text-uppercase">Email</label>
-                                    <input type="email" name="email" class="form-control rounded-3 p-3 bg-light border-0" placeholder="tu@email.com" required>
+                                    <label class="form-label fw-bold small text-uppercase" data-i18n="contact.email_label">Email</label>
+                                    <input type="email" name="email" class="form-control rounded-3 p-3 bg-light border-0" placeholder="tu@email.com" data-i18n-placeholder="contact.email_placeholder" required>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold small text-uppercase">Mensaje</label>
-                                    <textarea name="message" class="form-control rounded-3 p-3 bg-light border-0" rows="5" placeholder="¿En qué podemos ayudarte?" required></textarea>
+                                    <label class="form-label fw-bold small text-uppercase" data-i18n="contact.message_label">Mensaje</label>
+                                    <textarea name="message" class="form-control rounded-3 p-3 bg-light border-0" rows="5" placeholder="¿En qué podemos ayudarte?" data-i18n-placeholder="contact.message_placeholder" required></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold w-100">
-                                    <i class="fas fa-paper-plane me-2"></i> ENVIAR MENSAJE
+                                    <i class="fas fa-paper-plane me-2"></i> <span data-i18n="contact.send_btn">ENVIAR MENSAJE</span>
                                 </button>
                             </form>
                         </div>
                     </div>
                     <div class="col-md-5">
                         <div class="info-card p-5 rounded-4 bg-primary text-white h-100 shadow-lg">
-                            <h3 class="fw-bold mb-5">Información</h3>
+                            <h3 class="fw-bold mb-5" data-i18n="contact.info_title">Información</h3>
                             <div class="d-flex mb-4">
                                 <div class="icon-box me-3 fs-4"><i class="fas fa-map-marker-alt"></i></div>
                                 <div>
-                                    <h6 class="fw-bold mb-1">Dirección</h6>
-                                    <p class="mb-0 text-white-50">Dakar, Senegal</p>
+                                    <h6 class="fw-bold mb-1" data-i18n="contact.address_label">Dirección</h6>
+                                    <p class="mb-0 text-white-50 translatable">Dakar, Senegal</p>
                                 </div>
                             </div>
                             <div class="d-flex mb-4">
                                 <div class="icon-box me-3 fs-4"><i class="fas fa-envelope"></i></div>
                                 <div>
-                                    <h6 class="fw-bold mb-1">Email</h6>
+                                    <h6 class="fw-bold mb-1" data-i18n="contact.email_info">Email</h6>
                                     <p class="mb-0 text-white-50">Aeeegs@gmail.com</p>
                                 </div>
                             </div>
                             <div class="d-flex mb-5">
                                 <div class="icon-box me-3 fs-4"><i class="fas fa-phone-alt"></i></div>
                                 <div>
-                                    <h6 class="fw-bold mb-1">Teléfono</h6>
+                                    <h6 class="fw-bold mb-1" data-i18n="contact.phone_label">Teléfono</h6>
                                     <p class="mb-0 text-white-50">+221 78 596 14 79</p>
                                 </div>
                             </div>
                             
                             <hr class="border-white opacity-25 my-5">
-                            <h5 class="fw-bold mb-4">Síguenos</h5>
+                            <h5 class="fw-bold mb-4" data-i18n="contact.follow">Síguenos</h5>
                             <div class="d-flex">
                                 <a href="#!" class="btn btn-light rounded-circle me-2" style="width: 45px; height: 45px;"><i class="fab fa-facebook-f text-primary"></i></a>
                                 <a href="#!" class="btn btn-light rounded-circle me-2" style="width: 45px; height: 45px;"><i class="fab fa-instagram text-primary"></i></a>
