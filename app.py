@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from functools import wraps
 import os
 from dotenv import load_dotenv
@@ -41,19 +42,32 @@ if db_url.startswith("postgres://"):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+def save_uploaded_file(file_storage):
+    """Safely save an uploaded file and return the unique filename, or None."""
+    if not file_storage or not file_storage.filename:
+        return None
+    filename = secure_filename(file_storage.filename)
+    if not filename:
+        return None
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    unique_filename = f"{int(datetime.now().timestamp())}_{filename}"
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+    file_storage.save(file_path)
+    return unique_filename
 
 # Initialise db et migrate avec l'app
 db.init_app(app)
 migrate = Migrate(app, db)
 
 def run_migrations_safely():
-    from models import Admin
+    from models import Admin, ContactInfo
     from werkzeug.security import generate_password_hash
 
     try:
         # db.create_all() crée toutes les tables manquantes définies dans models.py
-        # C'est plus fiable que les migrations Alembic sur un filesystem éphémère (Render)
         db.create_all()
         print("Database tables created/verified successfully.")
 
@@ -65,16 +79,7 @@ def run_migrations_safely():
             db.session.add(default_admin)
             db.session.commit()
             print("Default admin created.")
-    except Exception as e:
-        print(f"Database init error: {e}")
-        raise e
 
-import sys
-is_cli = len(sys.argv) > 1 and sys.argv[1] in ['db', 'shell', 'run']
-if not is_cli:
-    with app.app_context():
-        run_migrations_safely()
-        # Seed contact info if not exists
         if ContactInfo.query.count() == 0:
             default_contact = ContactInfo(
                 address="Dakar, Senegal",
@@ -87,11 +92,31 @@ if not is_cli:
             db.session.add(default_contact)
             db.session.commit()
             print("Default contact info seeded.")
+    except Exception as e:
+        print(f"Database init warning: {e}")
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
+
+import sys
+is_cli = len(sys.argv) > 1 and sys.argv[1] in ['db', 'shell', 'run']
+if not is_cli:
+    with app.app_context():
+        run_migrations_safely()
 
 @app.context_processor
 def inject_contact_info():
     """Inject contact info into all templates automatically."""
-    contact_info = ContactInfo.query.first()
+    contact_info = None
+    try:
+        contact_info = ContactInfo.query.first()
+    except Exception:
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
+
     if not contact_info:
         contact_info = ContactInfo(
             address="Dakar, Senegal",
@@ -308,29 +333,32 @@ def admin_dashboard():
 def add_article():
     categories = Category.query.all()
     if request.method == 'POST':
-        title = request.form['title']
-        subtitle = request.form.get('subtitle')
-        content = request.form['content']
-        category_id = request.form.get('category_id')  # <-- correction ici
-        image = request.files.get('image')
+        try:
+            title = request.form['title']
+            subtitle = request.form.get('subtitle')
+            content = request.form['content']
+            category_id = request.form.get('category_id')
+            category_id = int(category_id) if category_id and category_id.isdigit() else None
 
-        image_filename = None
-        if image and image.filename != '':
-            image_filename = image.filename
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+            image_filename = save_uploaded_file(request.files.get('image'))
 
-        article = Article(
-            title=title,
-            content=content,
-            category_id=category_id,
-            image_filename=image_filename,
-            author_id=session['admin_id'],
-            date_posted=datetime.now(timezone.utc)
-        )
-        db.session.add(article)
-        db.session.commit()
-        flash("Article ajouté avec succès.", "success")
-        return redirect(url_for('admin_articles'))
+            article = Article(
+                title=title,
+                subtitle=subtitle,
+                content=content,
+                category_id=category_id,
+                image_filename=image_filename,
+                author_id=session['admin_id'],
+                date_posted=datetime.now(timezone.utc)
+            )
+            db.session.add(article)
+            db.session.commit()
+            flash("Article ajouté avec succès.", "success")
+            return redirect(url_for('admin_articles'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de l'ajout de l'article: {str(e)}", "danger")
+            return redirect(url_for('add_article'))
 
     return render_template('admin/add_article.html', categories=categories)
 
@@ -342,20 +370,24 @@ def edit_article(article_id):
     categories = Category.query.all()
 
     if request.method == 'POST':
-        article.title = request.form['title']
-        article.subtitle = request.form.get('subtitle')
-        article.content = request.form['content']
-        article.category_id = request.form.get('category_id')  # <-- correction ici
+        try:
+            article.title = request.form['title']
+            article.subtitle = request.form.get('subtitle')
+            article.content = request.form['content']
+            category_id = request.form.get('category_id')
+            article.category_id = int(category_id) if category_id and category_id.isdigit() else None
 
-        image = request.files.get('image')
-        if image and image.filename != '':
-            image_filename = image.filename
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-            article.image_filename = image_filename
+            image_filename = save_uploaded_file(request.files.get('image'))
+            if image_filename:
+                article.image_filename = image_filename
 
-        db.session.commit()
-        flash("Article modifié avec succès.", "success")
-        return redirect(url_for('admin_articles'))
+            db.session.commit()
+            flash("Article modifié avec succès.", "success")
+            return redirect(url_for('admin_articles'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de la modification de l'article: {str(e)}", "danger")
+            return redirect(url_for('edit_article', article_id=article_id))
 
     return render_template('admin/edit_article.html', article=article, categories=categories)
 
@@ -525,33 +557,34 @@ def admin_board():
 @login_required
 def add_board_term():
     if request.method == 'POST':
-        start_year = request.form['start_year']
-        end_year = request.form['end_year']
-        president_name = request.form['president_name']
-        president_bio = request.form['president_bio']
-        is_current = 'is_current' in request.form
-        
-        image = request.files.get('president_image')
-        image_filename = None
-        if image and image.filename != '':
-            image_filename = image.filename
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+        try:
+            start_year = int(request.form['start_year'])
+            end_year = int(request.form['end_year'])
+            president_name = request.form['president_name']
+            president_bio = request.form.get('president_bio', '')
+            is_current = 'is_current' in request.form
+            
+            image_filename = save_uploaded_file(request.files.get('president_image'))
 
-        if is_current:
-            BoardTerm.query.update({BoardTerm.is_current: False})
+            if is_current:
+                BoardTerm.query.update({BoardTerm.is_current: False})
 
-        term = BoardTerm(
-            start_year=start_year,
-            end_year=end_year,
-            president_name=president_name,
-            president_bio=president_bio,
-            president_image=image_filename,
-            is_current=is_current
-        )
-        db.session.add(term)
-        db.session.commit()
-        flash("Periodo directivo añadido.", "success")
-        return redirect(url_for('admin_board'))
+            term = BoardTerm(
+                start_year=start_year,
+                end_year=end_year,
+                president_name=president_name,
+                president_bio=president_bio,
+                president_image=image_filename,
+                is_current=is_current
+            )
+            db.session.add(term)
+            db.session.commit()
+            flash("Periodo directivo añadido.", "success")
+            return redirect(url_for('admin_board'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error al añadir periodo directivo: {str(e)}", "danger")
+            return redirect(url_for('add_board_term'))
     return render_template('admin/add_term.html')
 
 @app.route('/admin/board/edit/<int:term_id>', methods=['GET', 'POST'])
@@ -559,27 +592,30 @@ def add_board_term():
 def edit_board_term(term_id):
     term = BoardTerm.query.get_or_404(term_id)
     if request.method == 'POST':
-        term.start_year = request.form['start_year']
-        term.end_year = request.form['end_year']
-        term.president_name = request.form['president_name']
-        term.president_bio = request.form['president_bio']
-        is_current = 'is_current' in request.form
-        
-        image = request.files.get('president_image')
-        if image and image.filename != '':
-            image_filename = image.filename
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-            term.president_image = image_filename
+        try:
+            term.start_year = int(request.form['start_year'])
+            term.end_year = int(request.form['end_year'])
+            term.president_name = request.form['president_name']
+            term.president_bio = request.form.get('president_bio', '')
+            is_current = 'is_current' in request.form
+            
+            image_filename = save_uploaded_file(request.files.get('president_image'))
+            if image_filename:
+                term.president_image = image_filename
 
-        if is_current and not term.is_current:
-            BoardTerm.query.update({BoardTerm.is_current: False})
-            term.is_current = True
-        elif not is_current:
-            term.is_current = False
+            if is_current and not term.is_current:
+                BoardTerm.query.update({BoardTerm.is_current: False})
+                term.is_current = True
+            elif not is_current:
+                term.is_current = False
 
-        db.session.commit()
-        flash("Periodo directivo actualizado.", "success")
-        return redirect(url_for('admin_board'))
+            db.session.commit()
+            flash("Periodo directivo actualizado.", "success")
+            return redirect(url_for('admin_board'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error al actualizar periodo directivo: {str(e)}", "danger")
+            return redirect(url_for('edit_board_term', term_id=term_id))
     return render_template('admin/edit_term.html', term=term)
 
 @app.route('/admin/board/delete/<int:term_id>', methods=['POST'])
@@ -594,26 +630,27 @@ def delete_board_term(term_id):
 @app.route('/admin/board/member/add/<int:term_id>', methods=['POST'])
 @login_required
 def add_board_member(term_id):
-    name = request.form['name']
-    role = request.form['role']
-    dept_id = request.form.get('department_id')
-    
-    image = request.files.get('image')
-    image_filename = None
-    if image and image.filename != '':
-        image_filename = image.filename
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+    try:
+        name = request.form['name']
+        role = request.form['role']
+        dept_id = request.form.get('department_id')
+        dept_id = int(dept_id) if dept_id and str(dept_id).isdigit() else None
+        
+        image_filename = save_uploaded_file(request.files.get('image'))
 
-    member = BoardMember(
-        term_id=term_id, 
-        department_id=dept_id if dept_id else None,
-        name=name, 
-        role=role,
-        image_filename=image_filename
-    )
-    db.session.add(member)
-    db.session.commit()
-    flash("Miembro añadido.", "success")
+        member = BoardMember(
+            term_id=term_id, 
+            department_id=dept_id,
+            name=name, 
+            role=role,
+            image_filename=image_filename
+        )
+        db.session.add(member)
+        db.session.commit()
+        flash("Miembro añadido.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error al añadir miembro: {str(e)}", "danger")
     return redirect(url_for('edit_board_term', term_id=term_id))
 
 @app.route('/admin/board/member/delete/<int:member_id>', methods=['POST'])
@@ -660,31 +697,33 @@ def delete_department(dept_id):
 @app.route('/admin/board/member/add', methods=['POST'])
 @login_required
 def add_board_member_standalone():
-    term_id = request.form.get('term_id')
-    dept_id = request.form.get('department_id')
-    name = request.form['name']
-    role = request.form['role']
-    
-    if not term_id:
-        flash("Debes seleccionar un Periodo.", "danger")
-        return redirect(url_for('admin_departments'))
+    try:
+        term_id = request.form.get('term_id')
+        dept_id = request.form.get('department_id')
+        name = request.form['name']
+        role = request.form['role']
+        
+        if not term_id:
+            flash("Debes seleccionar un Periodo.", "danger")
+            return redirect(url_for('admin_departments'))
 
-    image = request.files.get('image')
-    image_filename = None
-    if image and image.filename != '':
-        image_filename = image.filename
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+        term_id = int(term_id)
+        dept_id = int(dept_id) if dept_id and str(dept_id).isdigit() else None
+        image_filename = save_uploaded_file(request.files.get('image'))
 
-    member = BoardMember(
-        term_id=term_id, 
-        department_id=dept_id if dept_id else None,
-        name=name, 
-        role=role,
-        image_filename=image_filename
-    )
-    db.session.add(member)
-    db.session.commit()
-    flash("Miembro asignado exitosamente.", "success")
+        member = BoardMember(
+            term_id=term_id, 
+            department_id=dept_id,
+            name=name, 
+            role=role,
+            image_filename=image_filename
+        )
+        db.session.add(member)
+        db.session.commit()
+        flash("Miembro asignado exitosamente.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error al asignar miembro: {str(e)}", "danger")
     return redirect(url_for('admin_departments'))
 
 # === MAIN ===
